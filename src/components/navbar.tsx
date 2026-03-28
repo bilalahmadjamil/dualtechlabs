@@ -68,13 +68,13 @@ const Navbar = () => {
         aria-label="Primary"
       >
         <div className="portal-section flex h-[5rem] items-center md:h-[5.5rem]">
-          {/* Left: logo — same horizontal rhythm as .portal-section */}
-          <div className="flex min-w-0 flex-1 justify-start">
+          {/* Left: logo — shrink-0 on small screens so “Get in touch” keeps space; flex-1 on lg for centered pill */}
+          <div className="flex min-w-0 shrink-0 justify-start lg:min-w-0 lg:flex-1">
             <Link
               href="/"
-              className="group relative z-[60] flex shrink-0 items-center outline-none ring-offset-2 ring-offset-portal-void focus-visible:ring-2 focus-visible:ring-cyan-400/80"
+              className="group relative z-[60] flex max-w-[100%] shrink-0 items-center outline-none ring-offset-2 ring-offset-portal-void focus-visible:ring-2 focus-visible:ring-cyan-400/80"
             >
-              <span className="relative h-9 w-[8.5rem] min-h-[2.25rem] sm:h-10 sm:w-[9.5rem] md:h-11 md:w-[11rem] lg:h-12 lg:w-[12.5rem] xl:h-[3.25rem] xl:w-[14rem]">
+              <span className="relative h-9 w-[7.25rem] min-h-[2.25rem] min-[380px]:w-[8rem] sm:h-10 sm:w-[9rem] md:h-11 md:w-[11rem] lg:h-12 lg:w-[12.5rem] xl:h-[3.25rem] xl:w-[14rem]">
                 <Image
                   src="/assets/dual-logo.png"
                   alt="DualTech Labs — Home"
@@ -103,11 +103,11 @@ const Navbar = () => {
           </div>
 
           {/* Right: CTA + menu — mirror left flex-1 so center stays geometrically centered */}
-          <div className="flex flex-1 items-center justify-end gap-3 sm:gap-4 md:gap-5">
+          <div className="flex min-w-0 flex-1 items-center justify-end gap-2 sm:gap-3 md:gap-5">
             <Link
               href="/contact"
               aria-current={contactActive ? "page" : undefined}
-              className={`relative z-[60] inline-flex items-center justify-center overflow-hidden rounded-full px-5 py-2.5 font-sans text-sm font-semibold tracking-wide transition-[filter,box-shadow,transform] duration-200 ease-out sm:px-7 sm:py-3 ${
+              className={`relative z-[60] inline-flex max-w-[min(100%,11rem)] shrink-0 items-center justify-center overflow-hidden rounded-full px-3.5 py-2.5 text-[13px] font-sans font-semibold leading-tight tracking-wide transition-[filter,box-shadow,transform] duration-200 ease-out min-[380px]:max-w-none min-[380px]:px-5 min-[380px]:text-sm sm:px-7 sm:py-3 ${
                 contactActive
                   ? "bg-cyan-500 text-portal-void shadow-cta ring-1 ring-cyan-400/50"
                   : "bg-gradient-to-r from-cyan-500 to-sky-600 text-white shadow-cta hover:brightness-110 active:scale-[0.98]"

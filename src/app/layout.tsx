@@ -5,6 +5,7 @@ import { ThemeProvider } from "../components/theme-provider";
 import Navbar from "../components/navbar";
 import SmoothScroll from "../components/smooth-scroll";
 import WhatsAppFloat from "../components/whatsapp-float";
+import SkipLink from "../components/skip-link";
 import { getSiteUrl } from "../config/site";
 
 const sans = Plus_Jakarta_Sans({
@@ -76,9 +77,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <SmoothScroll>
-            <a href="#main-content" className="skip-link">
-              Skip to main content
-            </a>
+            <SkipLink />
             <Navbar />
             <main id="main-content" tabIndex={-1} className="min-h-screen pt-[5rem] md:pt-[5.5rem]">
               {children}
