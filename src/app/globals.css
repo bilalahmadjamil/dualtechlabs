@@ -1,0 +1,281 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #ffffff;
+  --foreground: #0f172a;
+  --portal-primary: #22d3ee;
+  --portal-primary-muted: rgba(34, 211, 238, 0.12);
+}
+
+/*
+ * Fixed header offset for #hash links — match nav height exactly (row + border-b)
+ * so the section you picked lands flush under the bar, not with the prior section showing.
+ */
+html {
+  scroll-padding-top: calc(5rem + 1px);
+}
+
+@media (min-width: 768px) {
+  html {
+    scroll-padding-top: calc(5.5rem + 1px);
+  }
+}
+
+/* Smooth hash / in-page navigation only — does not slow wheel/trackpad (unlike JS smooth-scroll libs) */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+[data-theme="dark"] {
+  --background: #020617;
+  --foreground: #f1f5f9;
+  --portal-primary: #22d3ee;
+  --portal-primary-muted: rgba(34, 211, 238, 0.12);
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  overflow-x: hidden;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+::selection {
+  background: rgba(34, 211, 238, 0.28);
+  color: #f8fafc;
+}
+
+@layer components {
+  /* Unified section shell for IT portal pages */
+  .portal-section {
+    @apply relative mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8;
+  }
+
+  /* Section label — sans, calm caps (mono reserved for code/data only) */
+  .portal-kicker {
+    @apply mb-4 flex items-center gap-3 font-sans text-xs font-semibold uppercase tracking-[0.14em] text-cyan-400/90 md:text-[13px] md:tracking-[0.16em];
+  }
+
+  .portal-kicker-line {
+    @apply h-px w-8 shrink-0 bg-gradient-to-r from-cyan-400 to-cyan-500/30;
+  }
+
+  /* Card & list titles — readable title case */
+  .portal-card-title {
+    @apply font-sans text-lg font-semibold leading-snug tracking-tight text-white md:text-xl;
+  }
+
+  .portal-card-title-sm {
+    @apply font-sans text-base font-semibold leading-snug tracking-tight text-white;
+  }
+
+  /* Elevated surface cards */
+  /* No backdrop-blur — many cards + blur = scroll jank on mid-range GPUs */
+  .portal-card {
+    @apply rounded-2xl border border-white/[0.08] bg-gradient-to-br from-white/[0.06] to-white/[0.02] shadow-card transition-[border-color,box-shadow,background-color] duration-200 ease-out;
+  }
+
+  .portal-card:hover {
+    @apply border-cyan-500/20 shadow-card-hover;
+  }
+
+  /*
+   * Solutions grid: lighter paint than .portal-card — no inset shadow, smaller blur radius.
+   * Large stacked shadows + mesh backgrounds were the main scroll jank in this section.
+   */
+  .solutions-card {
+    @apply rounded-2xl border border-white/[0.08] bg-gradient-to-br from-white/[0.06] to-white/[0.02] transition-[border-color,background-color] duration-200 ease-out;
+    box-shadow: 0 2px 16px -6px rgba(0, 0, 0, 0.28);
+  }
+
+  .solutions-card:hover {
+    @apply border-cyan-500/25 bg-white/[0.04];
+    box-shadow: 0 6px 24px -10px rgba(0, 0, 0, 0.38);
+  }
+
+  /* CTAs — sans, sentence case; easier to scan than all-caps mono */
+  .portal-cta-primary {
+    @apply inline-flex items-center justify-center rounded-full bg-gradient-to-r from-cyan-500 to-sky-600 px-7 py-3.5 font-sans text-sm font-semibold tracking-wide text-white shadow-cta transition-[filter,transform] duration-200 ease-out hover:brightness-110 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300/90 focus-visible:ring-offset-2 focus-visible:ring-offset-portal-void sm:px-9 sm:py-4;
+  }
+
+  .portal-cta-secondary {
+    @apply inline-flex items-center justify-center rounded-full border border-white/15 bg-white/[0.04] px-7 py-3.5 font-sans text-sm font-semibold tracking-wide text-slate-100 transition-[border-color,background-color,transform] duration-200 ease-out hover:border-cyan-500/35 hover:bg-white/[0.08] active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400/70 focus-visible:ring-offset-2 focus-visible:ring-offset-portal-void sm:px-9 sm:py-4;
+  }
+
+  /* Skip link — hidden until :focus-visible (keyboard) */
+  .skip-link {
+    @apply fixed left-4 top-24 z-[100] -translate-y-[220%] rounded-lg bg-cyan-400 px-4 py-2.5 text-sm font-semibold text-portal-void shadow-lg opacity-0 transition-[transform,opacity] duration-200 focus:translate-y-0 focus:opacity-100 focus:outline-none focus:ring-2 focus:ring-white/60 focus-visible:translate-y-0 focus-visible:opacity-100;
+  }
+
+  /* Display headings — strong but not shouty */
+  .portal-headline {
+    @apply font-sans font-bold tracking-tight text-white md:font-extrabold;
+  }
+
+  .portal-headline-gradient {
+    @apply bg-gradient-to-r from-white via-cyan-200 to-cyan-400 bg-clip-text text-transparent;
+  }
+
+  .portal-body {
+    @apply text-base font-normal leading-[1.65] text-slate-400 md:text-lg md:leading-[1.7];
+  }
+
+  .portal-body-muted {
+    @apply text-sm font-normal leading-relaxed text-slate-500 md:text-base md:leading-relaxed;
+  }
+}
+
+.glass {
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.dark .glass {
+  background: rgba(15, 23, 42, 0.45);
+  border: 1px solid rgba(148, 163, 184, 0.1);
+}
+
+.bento-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-auto-rows: 200px;
+  gap: 1rem;
+}
+
+.bento-item {
+  border-radius: 1.5rem;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  backface-visibility: hidden;
+  transform: translate3d(0, 0, 0);
+}
+
+/* Scrollbar — aligned with cyan accent */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--background);
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #22d3ee, #0ea5e9);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #06b6d4;
+}
+
+.text-glow-blue {
+  text-shadow: 0 0 20px rgba(34, 211, 238, 0.45);
+}
+
+.border-glow-blue {
+  box-shadow: 0 0 24px rgba(34, 211, 238, 0.25);
+}
+
+.outline-glow {
+  box-shadow: 0 0 14px rgba(34, 211, 238, 0.4);
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee 60s linear infinite;
+  will-change: transform;
+  transform: translateZ(0);
+  overflow-anchor: none;
+}
+
+.pause-on-hover:hover .animate-marquee {
+  animation-play-state: paused;
+}
+
+@keyframes progress-grow {
+  0% {
+    width: 0%;
+  }
+  100% {
+    width: 100%;
+  }
+}
+
+.animate-progress {
+  animation: progress-grow 60s linear infinite;
+}
+
+.pause-on-hover:hover .animate-progress {
+  animation-play-state: paused;
+}
+
+/* Portfolio marquee — compositor-only transform, no main-thread Framer loop */
+@keyframes portfolio-marquee {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+@keyframes portfolio-progress {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+.portfolio-marquee-track {
+  display: flex;
+  width: max-content;
+  gap: 1.5rem;
+  animation: portfolio-marquee var(--marquee-duration, 60s) linear infinite;
+  will-change: transform;
+  backface-visibility: hidden;
+}
+
+.marquee-section.is-paused .portfolio-marquee-track,
+.marquee-section.is-paused .portfolio-progress-fill {
+  animation-play-state: paused;
+}
+
+.portfolio-progress-fill {
+  transform-origin: left;
+  animation: portfolio-progress var(--marquee-duration, 60s) linear infinite;
+  will-change: transform;
+  backface-visibility: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .portfolio-marquee-track,
+  .portfolio-progress-fill {
+    animation: none !important;
+  }
+}
