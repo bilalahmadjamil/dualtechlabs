@@ -56,6 +56,9 @@ export const metadata: Metadata = {
     index: true,
     follow: true,
   },
+  icons: {
+    icon: "/assets/fav-icon.png",
+  },
 };
 
 export default function RootLayout({
@@ -65,9 +68,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning className={`${sans.variable} ${mono.variable}`}>
-      <head>
-        <link rel="icon" href="/assets/fav-icon.png" />
-      </head>
       <body className="font-sans antialiased">
         <ThemeProvider
           attribute="class"
