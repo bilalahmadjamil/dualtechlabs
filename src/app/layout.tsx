@@ -6,6 +6,7 @@ import Navbar from "../components/navbar";
 import SmoothScroll from "../components/smooth-scroll";
 import WhatsAppFloat from "../components/whatsapp-float";
 import SkipLink from "../components/skip-link";
+import SeoJsonLd from "../components/seo-json-ld";
 import { getSiteUrl } from "../config/site";
 
 const sans = Plus_Jakarta_Sans({
@@ -25,6 +26,12 @@ const mono = JetBrains_Mono({
 const siteDescription =
   "Small team, senior engineers. We design and ship serious software: payments, government services, AI, and large web apps, with clear timelines and code your team can own.";
 
+const googleVerification =
+  typeof process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION === "string" &&
+  process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION.trim() !== ""
+    ? process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION.trim()
+    : undefined;
+
 export const metadata: Metadata = {
   metadataBase: new URL(getSiteUrl()),
   title: {
@@ -32,6 +39,7 @@ export const metadata: Metadata = {
     template: "%s · DualTech Labs",
   },
   description: siteDescription,
+  applicationName: "DualTech Labs",
   keywords: [
     "Software development",
     "Custom software",
@@ -39,7 +47,14 @@ export const metadata: Metadata = {
     "Government digital services",
     "AI products",
     "Enterprise engineering",
+    "Software studio",
+    "Custom software development",
   ],
+  authors: [{ name: "DualTech Labs", url: getSiteUrl() }],
+  creator: "DualTech Labs",
+  alternates: {
+    canonical: "/",
+  },
   openGraph: {
     type: "website",
     locale: "en_US",
@@ -56,10 +71,24 @@ export const metadata: Metadata = {
   robots: {
     index: true,
     follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
   },
   icons: {
     icon: "/assets/fav-icon.png",
   },
+  ...(googleVerification
+    ? {
+        verification: {
+          google: googleVerification,
+        },
+      }
+    : {}),
 };
 
 export default function RootLayout({
@@ -70,6 +99,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning className={`${sans.variable} ${mono.variable}`}>
       <body className="font-sans antialiased">
+        <SeoJsonLd />
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"

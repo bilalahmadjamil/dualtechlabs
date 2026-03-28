@@ -13,7 +13,12 @@ const contactDescription = "Email or WhatsApp DualTech Labs. We usually reply wi
 export const metadata: Metadata = {
   title: "Contact",
   description: contactDescription,
+  alternates: {
+    canonical: "/contact",
+  },
   openGraph: {
+    type: "website",
+    siteName: "DualTech Labs",
     title: "Contact · DualTech Labs",
     description: contactDescription,
     url: "/contact",
@@ -22,6 +27,10 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Contact · DualTech Labs",
     description: contactDescription,
+  },
+  robots: {
+    index: true,
+    follow: true,
   },
 };
 

@@ -7,6 +7,7 @@ export const alt = OG_ALT;
 export const size = OG_SIZE;
 export const contentType = "image/png";
 
-export default function OpenGraphImage() {
+/** Large summary card image for X/Twitter, Slack, and clients that prefer twitter:image. */
+export default function TwitterImage() {
   return new ImageResponse(<OgImageMarkup />, { ...OG_SIZE });
 }
