@@ -230,7 +230,7 @@ const ProjectCard = memo(function ProjectCard({ project }: { project: (typeof pr
           <div className="relative h-40 w-40">
             <Image
               src={project.logo}
-              alt={`${project.title} logo`}
+              alt={`${project.title} - Custom Software Development Case Study`}
               fill
               sizes="(max-width: 768px) 160px, 200px"
               className="object-contain filter grayscale transition-[filter] duration-300 ease-out group-hover:grayscale-0"

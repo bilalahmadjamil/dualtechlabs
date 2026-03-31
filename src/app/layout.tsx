@@ -24,7 +24,7 @@ const mono = JetBrains_Mono({
 });
 
 const siteDescription =
-  "Small team, senior engineers. We design and ship serious software: payments, government services, AI, and large web apps, with clear timelines and code your team can own.";
+  "Small team, senior engineers. We design and ship high-performance software: payments, AI systems, and cloud platforms for ambitious teams and products worldwide.";
 
 const googleVerification =
   typeof process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION === "string" &&
@@ -35,20 +35,24 @@ const googleVerification =
 export const metadata: Metadata = {
   metadataBase: new URL(getSiteUrl()),
   title: {
-    default: "DualTech Labs · Software for fintech, public sector, and AI products",
+    default: "DualTech Labs · Global Custom Software Development & AI Solutions",
     template: "%s · DualTech Labs",
   },
   description: siteDescription,
   applicationName: "DualTech Labs",
   keywords: [
     "Software development",
-    "Custom software",
-    "FinTech",
+    "Custom software development",
+    "AI solutions studio",
+    "FinTech development services",
     "Government digital services",
     "AI products",
     "Enterprise engineering",
+    "Global software engineering",
+    "Development agency USA Canada Europe Gulf Australia",
     "Software studio",
-    "Custom software development",
+    "Custom software development USA",
+    "AI product engineering",
   ],
   authors: [{ name: "DualTech Labs", url: getSiteUrl() }],
   creator: "DualTech Labs",
@@ -59,13 +63,13 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_US",
     siteName: "DualTech Labs",
-    title: "DualTech Labs · Software for fintech, public sector, and AI products",
+    title: "DualTech Labs · Global Custom Software Development & AI Solutions",
     description: siteDescription,
     url: "/",
   },
   twitter: {
     card: "summary_large_image",
-    title: "DualTech Labs · Software for fintech, public sector, and AI products",
+    title: "DualTech Labs · Global Custom Software Development & AI Solutions",
     description: siteDescription,
   },
   robots: {

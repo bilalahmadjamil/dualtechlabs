@@ -21,6 +21,20 @@ export default function SeoJsonLd() {
           "@type": "ImageObject",
           url: `${base}/assets/dual-logo.png`,
         },
+        address: {
+          "@type": "PostalAddress",
+          addressCountry: "International",
+        },
+        areaServed: ["Worldwide", "Global", "United States", "Canada", "Europe", "Australia", "Gulf Region", "UAE", "Saudi Arabia"]
+      },
+      {
+        "@type": "Service",
+        "@id": `${base}/#service`,
+        name: "Global Custom Software Development & AI Integration",
+        serviceType: "Software Engineering Studio",
+        provider: { "@id": `${base}/#organization` },
+        areaServed: ["Worldwide", "Global", "United States", "Canada", "Europe", "Australia", "Gulf Region", "UAE", "Saudi Arabia"],
+        description: "Boutique studio for high-stakes software: Fintech, AI, and Government digital services for teams worldwide."
       },
       {
         "@type": "WebSite",

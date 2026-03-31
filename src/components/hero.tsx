@@ -82,6 +82,7 @@ const Hero = () => {
             <h1 className="portal-headline text-5xl leading-[0.92] tracking-tighter sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl">
               DualTech <br />
               <span className="bg-gradient-to-br from-white via-cyan-100 to-cyan-400 bg-clip-text text-transparent">Labs</span>
+              <span className="sr-only"> · Global Custom Software Development & AI Solutions Studio</span>
             </h1>
           </motion.div>
 
