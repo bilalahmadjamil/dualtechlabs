@@ -76,7 +76,7 @@ const Hero = () => {
           >
             <div className="portal-kicker">
               <span className="portal-kicker-line" aria-hidden />
-              <span>Software studio · Fintech · Public sector · AI</span>
+              <span>Design · Engineering · Worldwide Delivery</span>
             </div>
 
             <h1 className="portal-headline text-5xl leading-[0.92] tracking-tighter sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl">
