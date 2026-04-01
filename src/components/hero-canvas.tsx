@@ -126,6 +126,12 @@ function HeroBackdrop({
   });
 
   useEffect(() => {
+    if (active) {
+      invalidate();
+    }
+  }, [active, invalidate]);
+
+  useEffect(() => {
     invalidate();
   }, [invalidate, size.width, size.height]);
 

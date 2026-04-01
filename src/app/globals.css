@@ -194,28 +194,6 @@ body {
   box-shadow: 0 0 14px rgba(34, 211, 238, 0.4);
 }
 
-@keyframes marquee {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(-50%);
-  }
-}
-
-.animate-marquee {
-  display: flex;
-  width: max-content;
-  animation: marquee 60s linear infinite;
-  will-change: transform;
-  transform: translateZ(0);
-  overflow-anchor: none;
-}
-
-.pause-on-hover:hover .animate-marquee {
-  animation-play-state: paused;
-}
-
 @keyframes progress-grow {
   0% {
     width: 0%;
@@ -233,49 +211,26 @@ body {
   animation-play-state: paused;
 }
 
-/* Portfolio marquee — compositor-only transform, no main-thread Framer loop */
-@keyframes portfolio-marquee {
-  from {
-    transform: translate3d(0, 0, 0);
-  }
-  to {
-    transform: translate3d(-50%, 0, 0);
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto !important;
   }
 }
 
-@keyframes portfolio-progress {
-  from {
-    transform: scaleX(0);
-  }
-  to {
-    transform: scaleX(1);
-  }
-}
-
+/* 
+ * Performance Optimized Marquee 
+ * Running on the Compositor Thread (GPU) 
+ */
 .portfolio-marquee-track {
   display: flex;
   width: max-content;
-  gap: 1.5rem;
-  animation: portfolio-marquee var(--marquee-duration, 60s) linear infinite;
+  gap: 2.5rem; /* md:gap-10 equivalent */
   will-change: transform;
   backface-visibility: hidden;
+  perspective: 1000;
+  -webkit-backface-visibility: hidden;
 }
 
-.marquee-section.is-paused .portfolio-marquee-track,
-.marquee-section.is-paused .portfolio-progress-fill {
+.portfolio-marquee-track.is-paused {
   animation-play-state: paused;
-}
-
-.portfolio-progress-fill {
-  transform-origin: left;
-  animation: portfolio-progress var(--marquee-duration, 60s) linear infinite;
-  will-change: transform;
-  backface-visibility: hidden;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .portfolio-marquee-track,
-  .portfolio-progress-fill {
-    animation: none !important;
-  }
 }

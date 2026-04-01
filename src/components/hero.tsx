@@ -34,7 +34,7 @@ function LiveTime() {
 
 const Hero = () => {
   const sectionRef = useRef<HTMLElement | null>(null);
-  const sceneActive = useInView(sectionRef, { amount: 0.12, margin: "0px 0px -15% 0px" });
+  const sceneActive = useInView(sectionRef, { amount: 0.01, margin: "100px 0px 100px 0px" });
   const reduceMotion = useReducedMotion();
   /** Never start at opacity:0 — that SSRs invisible HTML; if hydration lags, hero looks “missing”. */
   const instant = { duration: 0 as const };
