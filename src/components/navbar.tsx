@@ -81,8 +81,7 @@ const Navbar = () => {
                   fill
                   className="object-contain object-left brightness-0 invert transition-[filter,opacity] duration-300 group-hover:opacity-100 group-hover:drop-shadow-[0_0_24px_rgba(34,211,238,0.28)] opacity-[0.92] drop-shadow-[0_1px_14px_rgba(34,211,238,0.14)]"
                   priority
-                  fetchPriority="high"
-                  sizes="(max-width: 640px) 120px, 160px"
+                  sizes="(max-width: 640px) 180px, (max-width: 1024px) 220px, 260px"
                 />
               </span>
             </Link>

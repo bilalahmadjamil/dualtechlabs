@@ -127,7 +127,12 @@ function HeroBackdrop({
 
   useEffect(() => {
     if (active) {
-      invalidate();
+      // Soft Start: delay the WebGL rendering slightly to give hydration 
+      // and text rendering priority on the main thread.
+      const timer = setTimeout(() => {
+        invalidate();
+      }, 50);
+      return () => clearTimeout(timer);
     }
   }, [active, invalidate]);
 
