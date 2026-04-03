@@ -97,7 +97,7 @@ export default function Home() {
               </div>
               <div className="space-y-2">
                 <h3 className="portal-card-title">Fintech &amp; payments</h3>
-                <p className="text-sm leading-relaxed text-slate-500">
+                <p className="text-sm leading-relaxed text-slate-400">
                   Money movement, onboarding, and ledgers built for regulated environments.
                 </p>
               </div>
@@ -130,7 +130,7 @@ export default function Home() {
                   </svg>
                 </div>
                 <h4 className="portal-card-title-sm">{cap.title}</h4>
-                <p className="text-sm leading-relaxed text-slate-500">{cap.desc}</p>
+                <p className="text-sm leading-relaxed text-slate-400">{cap.desc}</p>
                 <div className="mt-1 h-px w-full overflow-hidden rounded-full bg-white/[0.06]">
                   <div className="h-full w-full origin-left scale-x-0 bg-gradient-to-r from-cyan-400 to-cyan-500/20 transition-transform duration-300 ease-out group-hover:scale-x-100" />
                 </div>
@@ -210,7 +210,7 @@ export default function Home() {
       </section>
 
       <footer className="border-t border-white/[0.06] py-10 text-center">
-        <p className="font-sans text-xs text-slate-500">
+        <p className="font-sans text-xs text-slate-400">
           © {new Date().getFullYear()} DualTech Labs. All rights reserved.
         </p>
       </footer>

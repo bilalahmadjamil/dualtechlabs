@@ -420,7 +420,7 @@ const ModernPortfolio = () => {
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           transition={{ delay: 0.5 }}
-          className="mt-12 text-center font-sans text-sm text-slate-500"
+          className="mt-12 text-center font-sans text-sm text-slate-400"
         >
           Showing {filteredProjects.length} {filteredProjects.length === 1 ? 'project' : 'projects'}
           {selectedCategory !== 'all' && ` in ${selectedCategory}`}

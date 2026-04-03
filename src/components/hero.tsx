@@ -23,7 +23,7 @@ function LiveTime() {
     return () => clearInterval(timer);
   }, []);
 
-  if (!time) return <span className="text-xs tabular-nums tracking-wide text-slate-500">—:—:—</span>;
+  if (!time) return <span className="text-xs tabular-nums tracking-wide text-slate-400">—:—:—</span>;
 
   return (
     <span className="text-xs font-medium tabular-nums tracking-wide text-slate-300">
@@ -145,8 +145,8 @@ const Hero = () => {
         </div>
       </div>
 
-      <div className="absolute right-4 top-4 hidden font-sans text-right text-slate-500 sm:right-6 sm:top-5 md:top-6 sm:block">
-        <p className="text-[11px] font-medium uppercase tracking-wide text-slate-500">Local time</p>
+      <div className="absolute right-4 top-4 hidden font-sans text-right text-slate-400 sm:right-6 sm:top-5 md:top-6 sm:block">
+        <p className="text-[11px] font-medium uppercase tracking-wide text-slate-400">Local time</p>
         <LiveTime />
       </div>
     </section>

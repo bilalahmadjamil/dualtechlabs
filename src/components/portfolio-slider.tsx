@@ -236,7 +236,7 @@ const PortfolioSlider = () => {
 
         {!isMobile && (
           <div className="flex items-center gap-6">
-            <div className="hidden font-sans text-xs text-slate-500 lg:block">Interaction</div>
+            <div className="hidden font-sans text-xs text-slate-400 lg:block">Interaction</div>
             <div className="flex gap-4">
               <button
                 type="button"
@@ -353,7 +353,7 @@ const ProjectCard = memo(function ProjectCard({ project }: { project: (typeof pr
         </div>
 
         <div className="flex items-center justify-between border-t border-white/5 pt-4">
-          <span className="font-sans text-[10px] font-bold uppercase tracking-widest text-slate-500 transition-colors group-hover:text-cyan-400">
+          <span className="font-sans text-[10px] font-bold uppercase tracking-widest text-slate-400 transition-colors group-hover:text-cyan-400">
             Explore site
           </span>
           <div className="mx-4 h-px flex-grow bg-white/10" />

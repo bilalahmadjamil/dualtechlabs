@@ -42,7 +42,7 @@ export default function ContactPage() {
   return (
     <div className="min-h-screen bg-portal-void bg-portal-mesh pb-28 pt-6 md:pt-10">
       <div className="portal-section max-w-4xl">
-        <nav className="mb-10 font-sans text-sm text-slate-500 md:mb-14">
+        <nav className="mb-10 font-sans text-sm text-slate-400 md:mb-14">
           <Link href="/" className="text-cyan-400/90 transition-colors hover:text-white">
             ← Back to home
           </Link>

@@ -66,7 +66,7 @@ const PortfolioGrid = () => {
     <section id="portfolio" className="py-24 px-4 max-w-7xl mx-auto">
       <div className="text-center mb-16">
         <h2 className="text-3xl md:text-5xl font-black tracking-tight mb-4">Selected Portfolio</h2>
-        <p className="text-slate-500 max-w-2xl mx-auto">
+        <p className="text-slate-400 max-w-2xl mx-auto">
           From Abu Dhabi's primary government hub to global fintech giants, we've delivered some of the world's most critical digital infrastructures.
         </p>
       </div>
@@ -103,7 +103,7 @@ const PortfolioGrid = () => {
                 />
               </div>
               <h3 className="text-2xl font-bold mb-2">{project.title}</h3>
-              <p className="text-slate-500 dark:text-slate-400 text-sm mb-4 line-clamp-2">
+              <p className="text-slate-400 text-sm mb-4 line-clamp-2">
                 {project.description}
               </p>
               <div className="flex flex-wrap gap-2 mb-6">

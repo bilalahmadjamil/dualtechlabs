@@ -132,7 +132,7 @@ body {
   }
 
   .portal-body-muted {
-    @apply text-sm font-normal leading-relaxed text-slate-500 md:text-base md:leading-relaxed;
+    @apply text-sm font-normal leading-relaxed text-slate-400 md:text-base md:leading-relaxed;
   }
 }
 
