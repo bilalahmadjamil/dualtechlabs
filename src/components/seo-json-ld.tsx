@@ -25,6 +25,16 @@ export default function SeoJsonLd() {
           "@type": "PostalAddress",
           addressCountry: "International",
         },
+        knowsAbout: [
+          "Fintech Infrastructure",
+          "Government Digital Transformation",
+          "AI-Driven E-commerce",
+          "Web3 & Blockchain Marketplaces",
+          "IoT Building Intelligence",
+          "Reinsurance Software Systems",
+          "Cross-border Payment Gateways",
+          "Legal Workflow Automation"
+        ],
         areaServed: ["Worldwide", "Global", "United States", "Canada", "Europe", "Australia", "Gulf Region", "UAE", "Saudi Arabia"]
       },
       {
@@ -34,7 +44,18 @@ export default function SeoJsonLd() {
         serviceType: "Software Engineering Studio",
         provider: { "@id": `${base}/#organization` },
         areaServed: ["Worldwide", "Global", "United States", "Canada", "Europe", "Australia", "Gulf Region", "UAE", "Saudi Arabia"],
-        description: "Boutique studio for high-stakes software: Fintech, AI, and Government digital services for teams worldwide."
+        description: "Boutique studio for high-stakes software: Fintech, AI, and Government digital services for teams worldwide.",
+        hasOfferCatalog: {
+          "@type": "OfferCatalog",
+          "name": "Software Engineering Services",
+          "itemListElement": [
+            { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Fintech & Banking APIs" } },
+            { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "GovTech & Citizen Portals" } },
+            { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "AI & Supply Chain Intelligence" } },
+            { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Blockchain & NFT Infrastructure" } },
+            { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "InsurTech & Reinsurance Systems" } }
+          ]
+        }
       },
       {
         "@type": "WebSite",

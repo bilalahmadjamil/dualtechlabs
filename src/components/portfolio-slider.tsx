@@ -10,8 +10,9 @@ const projects = [
   {
     id: "thrivo-ai",
     title: "Thrivo AI",
-    category: "AI E-commerce",
-    outcome: "AI-assisted shopping flows and catalog experiences for modern retail.",
+    category: "AI & E-commerce",
+    services: ["Sourcing Intelligence", "Unified Retail Dashboard", "Catalog AI"],
+    outcome: "AI-driven sourcing & inventory intelligence for data-first retail brands.",
     logo: "/assets/thrivo-ai.jpeg",
     color: "#3b82f6",
     link: "https://thrivo.ai/",
@@ -19,62 +20,69 @@ const projects = [
   {
     id: "cashcon",
     title: "CashCon",
-    category: "Fintech Core",
-    outcome: "Core banking-style building blocks for digital money products.",
+    category: "Fintech Infrastructure",
+    services: ["Open Banking API", "Collateral Automation", "Ledger Systems"],
+    outcome: "Consolidated, real-time banking: automate cash collateral across all lender relationships.",
     logo: "/assets/cashcon.webp",
     color: "#2563eb",
     link: "https://www.northerndigitalsolutions.io/solutions",
   },
   {
     id: "tamm",
-    title: "TAMM",
-    category: "Gov Portal",
-    outcome: "National-scale portal: services citizens use every day, built to stay up.",
+    title: "TAMM Abu Dhabi",
+    category: "GovTech / Citizen Portals",
+    services: ["Public Sector Digitization", "UAE PASS Identity", "Payment Gateways"],
+    outcome: "700+ government services unified into a single, high-scale digital civic journey.",
     logo: "/assets/tamm.jpg",
     color: "#1d4ed8",
     link: "https://www.tamm.abudhabi/",
   },
   {
     id: "moneygram",
-    title: "MoneyGram",
-    category: "Payment App",
-    outcome: "Global money movement: apps and web journeys millions rely on.",
+    title: "MoneyGram Digital",
+    category: "Global Payment Networks",
+    services: ["Remittance Technology", "Crypto On/Off-ramps", "Mobile Wallets"],
+    outcome: "The digital evolution of global cross-border payments for millions of wallet users.",
     logo: "/assets/moneygram.png",
     color: "#3b82f6",
     link: "https://www.moneygram.com/r/za/en",
   },
   {
     id: "myntist",
-    title: "Myntist",
-    category: "Web3 Marketplace",
-    outcome: "Marketplace and wallet flows where trust and speed both matter.",
+    title: "Myntist Marketplace",
+    category: "Web3 / Blockchain",
+    services: ["NFT Infrastructure", "Creative Artflow AI", "Digital Economies"],
+    outcome: "Blockchain marketplace where skills and digital assets are tokenized for wealth building.",
     logo: "/assets/myntist-logo.jpeg",
     color: "#6366f1",
     link: "https://www.myntist.com/",
   },
   {
     id: "iclc",
-    title: "ICLC",
-    category: "Legal Tech",
-    outcome: "Digital tools for legal services: intake, case work, and client access.",
+    title: "ICLC Legal Hub",
+    category: "LegalTech Automation",
+    services: ["Workflow Automation", "Privacy Advisory", "Compliance Infra"],
+    outcome: "Transforming corporate law with digital foresight: agile intakes and case management.",
     logo: "/assets/iclc.jpg",
     color: "#4f46e5",
     link: "https://iclc.com.pk/",
   },
   {
     id: "optergy",
-    title: "Optergy",
+    title: "Optergy BMS",
     category: "Building Intelligence",
-    outcome: "Software for smarter buildings: energy, controls, and operations data.",
+    services: ["Smart Energy Dashboards", "BMS Software", "IoT Automation"],
+    outcome: "Intelligent management: software for HVAC, lighting, and energy data at any scale.",
     logo: "/assets/optergy_logo.jpeg",
     color: "#00a3e0",
     link: "https://optergy.com/",
   },
   {
     id: "transre",
-    title: "TransRe",
-    category: "Global Reinsurance",
-    outcome: "Reinsurance digital channels for brokers, clients, and internal teams.",
+    title: "TransRe Digital",
+    category: "InsurTech / Reinsurance",
+    services: ["Risk Analysis AI", "Underwriting Apps", "Claims Engines"],
+    outcome: "Global reinsurance at scale: algorithmic risk processing and underwriting integrations.",
     logo: "/assets/transre.jpg",
     color: "#b22222",
     link: "https://www.transre.com/",
@@ -164,7 +172,17 @@ const MobileProjectCard = ({ project }: { project: (typeof projects)[number] }) 
             {project.category}
           </div>
           <h3 className="text-xl font-bold tracking-tight text-white">{project.title}</h3>
-          <p className="mt-2 line-clamp-3 text-xs leading-relaxed text-slate-400">{project.outcome}</p>
+          <div className="mt-3 flex flex-wrap gap-1.5">
+            {project.services.slice(0, 2).map((service) => (
+              <span
+                key={service}
+                className="rounded-full border border-white/10 bg-white/[0.05] px-2 py-0.5 font-sans text-[9px] font-bold uppercase tracking-wider text-slate-400"
+              >
+                {service}
+              </span>
+            ))}
+          </div>
+          <p className="mt-3 line-clamp-2 text-xs leading-relaxed text-slate-400">{project.outcome}</p>
         </div>
 
         <div className="relative flex h-40 w-full items-center justify-center p-3">
@@ -181,7 +199,7 @@ const MobileProjectCard = ({ project }: { project: (typeof projects)[number] }) 
 
         <div className="flex items-center justify-between border-t border-white/5 pt-4">
           <span className="font-sans text-[10px] font-bold uppercase tracking-widest text-cyan-400">
-            View Case Study
+            Explore site
           </span>
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -335,7 +353,17 @@ const ProjectCard = memo(function ProjectCard({ project }: { project: (typeof pr
           <h3 className="text-xl font-bold tracking-tight text-white transition-colors group-hover:text-cyan-200 md:text-2xl">
             {project.title}
           </h3>
-          <p className="mt-2 line-clamp-2 text-xs leading-snug text-slate-400 sm:text-sm">{project.outcome}</p>
+          <div className="mt-3 flex flex-wrap gap-2">
+            {project.services.map((service) => (
+              <span
+                key={service}
+                className="rounded-full border border-white/10 bg-white/[0.05] px-2.5 py-1 font-sans text-[9px] font-bold uppercase tracking-wider text-slate-400 transition-colors group-hover:border-cyan-500/30 group-hover:text-cyan-400/90"
+              >
+                {service}
+              </span>
+            ))}
+          </div>
+          <p className="mt-4 line-clamp-2 text-xs leading-relaxed text-slate-400 sm:text-sm">{project.outcome}</p>
         </div>
 
         <div className="relative flex h-40 w-full shrink-0 items-center justify-center p-3 sm:h-44">
