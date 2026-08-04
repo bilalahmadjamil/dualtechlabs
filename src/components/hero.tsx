@@ -387,7 +387,13 @@ const Hero = () => {
       </div>
 
       {/* ── Layered overlays for text readability ─────────────────────────── */}
-      {/* Radial vignette — darkens right side where text lives */}
+      {/* Mobile: uniform dark overlay — vignette alone doesn't cover left side where text sits */}
+      <div
+        className="pointer-events-none absolute inset-0 z-[1] md:hidden"
+        style={{ background: "rgba(5,7,18,0.72)" }}
+        aria-hidden
+      />
+      {/* Radial vignette — darkens right side where text lives on desktop */}
       <div
         className="pointer-events-none absolute inset-0 z-[1]"
         style={{ background: "radial-gradient(ellipse 90% 80% at 68% 55%, rgba(5,7,18,0.82) 0%, rgba(5,7,18,0.45) 50%, rgba(5,7,18,0.05) 100%)" }}

@@ -733,7 +733,7 @@ function PhasePanel({
       animate={{ opacity: 1, x: 0, y: 0 }}
       exit={{    opacity: 0, x: direction * -28, y: -6 }}
       transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-      className="absolute inset-0 flex flex-col justify-between p-7 md:p-10"
+      className="absolute inset-0 flex flex-col justify-between p-4 sm:p-7 md:p-10"
     >
       {/* ── Service thematic background illustration ── */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-2xl" style={{ color: service.accentFrom }} aria-hidden>
@@ -1015,7 +1015,7 @@ export default function Services() {
 
             {/* Service header */}
             <div
-              className="rounded-2xl px-6 py-4 flex items-center justify-between gap-4"
+              className="rounded-2xl px-4 sm:px-6 py-4 flex items-center justify-between gap-4"
               style={{ background: "#FFFFFF", border: "1px solid #E2E8F0", boxShadow: "0 2px 16px -4px rgba(0,0,0,0.07)" }}
             >
               <div>
@@ -1082,7 +1082,7 @@ export default function Services() {
             <div
               className="relative flex-1 rounded-2xl overflow-hidden"
               style={{
-                minHeight: "clamp(300px, 55vw, 420px)",
+                minHeight: "clamp(420px, 55vw, 460px)",
                 background: "#FFFFFF",
                 border: "1px solid #E2E8F0",
                 boxShadow: "0 4px 32px -8px rgba(0,0,0,0.08)",
