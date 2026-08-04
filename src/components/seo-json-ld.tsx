@@ -1,61 +1,99 @@
 import { getSiteUrl } from "@/config/site";
 
 const DESCRIPTION =
-  "Small team, senior engineers. We design and ship serious software: payments, government services, AI, and large web apps, with clear timelines and code your team can own.";
+  "DualTech Labs delivers custom software development, AI integration, cloud solutions, mobile engineering, and digital transformation services worldwide. Your idea, built right.";
 
-/**
- * Organization + WebSite JSON-LD for Google rich results context (no fake SearchAction).
- */
 export default function SeoJsonLd() {
   const base = getSiteUrl();
+
   const graph = {
     "@context": "https://schema.org",
     "@graph": [
       {
-        "@type": "Organization",
+        "@type": ["Organization", "ProfessionalService"],
         "@id": `${base}/#organization`,
         name: "DualTech Labs",
         url: base,
         description: DESCRIPTION,
         logo: {
           "@type": "ImageObject",
-          url: `${base}/assets/dual-logo.png`,
+          url: `${base}/assets/logo-light-removebg-preview.png`,
         },
-        address: {
-          "@type": "PostalAddress",
-          addressCountry: "International",
+        contactPoint: {
+          "@type": "ContactPoint",
+          contactType: "customer service",
+          availableLanguage: "English",
         },
+        areaServed: "Worldwide",
         knowsAbout: [
-          "Fintech Infrastructure",
-          "Government Digital Transformation",
-          "AI-Driven E-commerce",
-          "Web3 & Blockchain Marketplaces",
-          "IoT Building Intelligence",
-          "Reinsurance Software Systems",
-          "Cross-border Payment Gateways",
-          "Legal Workflow Automation"
+          "Custom Software Development",
+          "AI and Machine Learning",
+          "Cloud Computing",
+          "Mobile App Development",
+          "UI/UX Design",
+          "Digital Transformation",
+          "Fintech Development",
+          "Cybersecurity",
+          "DevOps",
+          "IT Consulting",
         ],
-        areaServed: ["Worldwide", "Global", "United States", "Canada", "Europe", "Australia", "Gulf Region", "UAE", "Saudi Arabia"]
       },
       {
         "@type": "Service",
         "@id": `${base}/#service`,
-        name: "Global Custom Software Development & AI Integration",
-        serviceType: "Software Engineering Studio",
+        name: "IT Services & Custom Software Development",
+        serviceType: "Information Technology Services",
         provider: { "@id": `${base}/#organization` },
-        areaServed: ["Worldwide", "Global", "United States", "Canada", "Europe", "Australia", "Gulf Region", "UAE", "Saudi Arabia"],
-        description: "Boutique studio for high-stakes software: Fintech, AI, and Government digital services for teams worldwide.",
+        areaServed: "Worldwide",
+        description: DESCRIPTION,
         hasOfferCatalog: {
           "@type": "OfferCatalog",
-          "name": "Software Engineering Services",
-          "itemListElement": [
-            { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Fintech & Banking APIs" } },
-            { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "GovTech & Citizen Portals" } },
-            { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "AI & Supply Chain Intelligence" } },
-            { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Blockchain & NFT Infrastructure" } },
-            { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "InsurTech & Reinsurance Systems" } }
-          ]
-        }
+          name: "IT Services",
+          itemListElement: [
+            { "@type": "Offer", itemOffered: { "@type": "Service", name: "Custom Software Development" } },
+            { "@type": "Offer", itemOffered: { "@type": "Service", name: "AI & Intelligent Systems" } },
+            { "@type": "Offer", itemOffered: { "@type": "Service", name: "Cloud & DevOps" } },
+            { "@type": "Offer", itemOffered: { "@type": "Service", name: "Mobile Engineering" } },
+            { "@type": "Offer", itemOffered: { "@type": "Service", name: "UI/UX Design" } },
+            { "@type": "Offer", itemOffered: { "@type": "Service", name: "Web Platforms & Applications" } },
+            { "@type": "Offer", itemOffered: { "@type": "Service", name: "Digital Transformation" } },
+            { "@type": "Offer", itemOffered: { "@type": "Service", name: "Fintech & Payments" } },
+            { "@type": "Offer", itemOffered: { "@type": "Service", name: "API Development & Integrations" } },
+            { "@type": "Offer", itemOffered: { "@type": "Service", name: "Cybersecurity & Compliance" } },
+            { "@type": "Offer", itemOffered: { "@type": "Service", name: "QA & Testing" } },
+            { "@type": "Offer", itemOffered: { "@type": "Service", name: "IT Consulting" } },
+          ],
+        },
+      },
+      {
+        "@type": "FAQPage",
+        "@id": `${base}/#faq`,
+        mainEntity: [
+          {
+            "@type": "Question",
+            name: "What IT services does DualTech Labs provide?",
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: "DualTech Labs provides custom software development, AI & intelligent systems, cloud & DevOps, mobile engineering, UI/UX design, web platforms, digital transformation, fintech & payments, API development, cybersecurity, QA & testing, and IT consulting services worldwide.",
+            },
+          },
+          {
+            "@type": "Question",
+            name: "Does DualTech Labs work with clients worldwide?",
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: "Yes. DualTech Labs works with clients globally — across the US, Europe, the Gulf region, Asia, and beyond. We deliver remote-first, with clear communication and full ownership transfer.",
+            },
+          },
+          {
+            "@type": "Question",
+            name: "How do I start a project with DualTech Labs?",
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: "Reach out via email or WhatsApp. Share your idea, rough or refined — we'll respond within one business day with honest feedback on approach, timeline, and fit.",
+            },
+          },
+        ],
       },
       {
         "@type": "WebSite",

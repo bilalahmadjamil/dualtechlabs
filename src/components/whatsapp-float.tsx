@@ -1,10 +1,13 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { getWhatsAppUrl } from "@/config/contact";
 
 export default function WhatsAppFloat() {
+  const pathname = usePathname();
   const href = getWhatsAppUrl();
+  if (pathname === "/contact") return null;
 
   return (
     <Link

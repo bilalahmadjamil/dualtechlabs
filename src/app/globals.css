@@ -2,235 +2,351 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ─── Brand tokens ────────────────────────────────────────────────────────── */
 :root {
-  --background: #ffffff;
-  --foreground: #0f172a;
-  --portal-primary: #22d3ee;
-  --portal-primary-muted: rgba(34, 211, 238, 0.12);
-}
+  --background: #050714;
+  --foreground: #F8FAFC;
+  --dtl-purple: #7C3AED;
+  --dtl-cyan:   #06B6D4;
+  --dtl-gradient: linear-gradient(135deg, #7C3AED 0%, #06B6D4 100%);
 
-/*
- * Fixed header offset for #hash links — match nav height exactly (row + border-b)
- * so the section you picked lands flush under the bar, not with the prior section showing.
- */
-html {
-  scroll-padding-top: calc(5rem + 1px);
-}
-
-@media (min-width: 768px) {
-  html {
-    scroll-padding-top: calc(5.5rem + 1px);
-  }
-}
-
-/* Smooth hash / in-page navigation only — does not slow wheel/trackpad (unlike JS smooth-scroll libs) */
-@media (prefers-reduced-motion: no-preference) {
-  html {
-    scroll-behavior: smooth;
-  }
+  /* Light section tokens */
+  --dtl-light:     #F8FAFC;
+  --dtl-off-white: #F1F5F9;
+  --dtl-slate-900: #0F172A;
+  --dtl-slate-700: #334155;
+  --dtl-slate-600: #475569;
+  --dtl-slate-200: #E2E8F0;
 }
 
 [data-theme="dark"] {
-  --background: #020617;
-  --foreground: #f1f5f9;
-  --portal-primary: #22d3ee;
-  --portal-primary-muted: rgba(34, 211, 238, 0.12);
+  --background: #050714;
+  --foreground: #F8FAFC;
 }
 
+/* ─── Scroll ──────────────────────────────────────────────────────────────── */
+/* NOTE: scroll-behavior:smooth removed — Lenis handles smooth scroll.
+   Having both causes double-smoothing and makes scroll feel sluggish.       */
+html {
+  scroll-padding-top: calc(5rem + 1px);
+}
+@media (min-width: 768px) {
+  html { scroll-padding-top: calc(5.5rem + 1px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto !important; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ─── Base ────────────────────────────────────────────────────────────────── */
 body {
   color: var(--foreground);
   background: var(--background);
   overflow-x: hidden;
+  overscroll-behavior: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
-}
-
 ::selection {
-  background: rgba(34, 211, 238, 0.28);
-  color: #f8fafc;
+  background: rgba(124, 58, 237, 0.25);
+  color: #0F172A;
 }
 
-@layer components {
-  /* Unified section shell for IT portal pages */
-  .portal-section {
-    @apply relative mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8;
-  }
-
-  /* Section label — sans, calm caps (mono reserved for code/data only) */
-  .portal-kicker {
-    @apply mb-4 flex items-center gap-3 font-sans text-xs font-semibold uppercase tracking-[0.14em] text-cyan-400/90 md:text-[13px] md:tracking-[0.16em];
-  }
-
-  .portal-kicker-line {
-    @apply h-px w-8 shrink-0 bg-gradient-to-r from-cyan-400 to-cyan-500/30;
-  }
-
-  /* Card & list titles — readable title case */
-  .portal-card-title {
-    @apply font-sans text-lg font-semibold leading-snug tracking-tight text-white md:text-xl;
-  }
-
-  .portal-card-title-sm {
-    @apply font-sans text-base font-semibold leading-snug tracking-tight text-white;
-  }
-
-  /* Elevated surface cards */
-  /* No backdrop-blur — many cards + blur = scroll jank on mid-range GPUs */
-  .portal-card {
-    @apply rounded-2xl border border-white/[0.08] bg-gradient-to-br from-white/[0.06] to-white/[0.02] shadow-card transition-[border-color,box-shadow,background-color] duration-200 ease-out;
-  }
-
-  .portal-card:hover {
-    @apply border-cyan-500/20 shadow-card-hover;
-  }
-
-  /*
-   * Solutions grid: lighter paint than .portal-card — no inset shadow, smaller blur radius.
-   * Large stacked shadows + mesh backgrounds were the main scroll jank in this section.
-   */
-  .solutions-card {
-    @apply rounded-2xl border border-white/[0.08] bg-gradient-to-br from-white/[0.06] to-white/[0.02] transition-[border-color,background-color] duration-200 ease-out;
-    box-shadow: 0 2px 16px -6px rgba(0, 0, 0, 0.28);
-  }
-
-  .solutions-card:hover {
-    @apply border-cyan-500/25 bg-white/[0.04];
-    box-shadow: 0 6px 24px -10px rgba(0, 0, 0, 0.38);
-  }
-
-  /* CTAs — sans, sentence case; easier to scan than all-caps mono */
-  .portal-cta-primary {
-    @apply inline-flex items-center justify-center rounded-full bg-gradient-to-r from-cyan-500 to-sky-600 px-7 py-3.5 font-sans text-sm font-semibold tracking-wide text-white shadow-cta transition-[filter,transform] duration-200 ease-out hover:brightness-110 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300/90 focus-visible:ring-offset-2 focus-visible:ring-offset-portal-void sm:px-9 sm:py-4;
-  }
-
-  .portal-cta-secondary {
-    @apply inline-flex items-center justify-center rounded-full border border-white/15 bg-white/[0.04] px-7 py-3.5 font-sans text-sm font-semibold tracking-wide text-slate-100 transition-[border-color,background-color,transform] duration-200 ease-out hover:border-cyan-500/35 hover:bg-white/[0.08] active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400/70 focus-visible:ring-offset-2 focus-visible:ring-offset-portal-void sm:px-9 sm:py-4;
-  }
-
-  /* Skip link — hidden until :focus-visible (keyboard) */
-  .skip-link {
-    @apply fixed left-4 top-24 z-[100] -translate-y-[220%] rounded-lg bg-cyan-400 px-4 py-2.5 text-sm font-semibold text-portal-void shadow-lg opacity-0 transition-[transform,opacity] duration-200 focus:translate-y-0 focus:opacity-100 focus:outline-none focus:ring-2 focus:ring-white/60 focus-visible:translate-y-0 focus-visible:opacity-100;
-  }
-
-  /* Display headings — strong but not shouty */
-  .portal-headline {
-    @apply font-sans font-bold tracking-tight text-white md:font-extrabold;
-  }
-
-  .portal-headline-gradient {
-    @apply bg-gradient-to-r from-white via-cyan-200 to-cyan-400 bg-clip-text text-transparent;
-  }
-
-  .portal-body {
-    @apply text-base font-normal leading-[1.65] text-slate-400 md:text-lg md:leading-[1.7];
-  }
-
-  .portal-body-muted {
-    @apply text-sm font-normal leading-relaxed text-slate-400 md:text-base md:leading-relaxed;
-  }
-}
-
-.glass {
-  background: rgba(255, 255, 255, 0.04);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.dark .glass {
-  background: rgba(15, 23, 42, 0.45);
-  border: 1px solid rgba(148, 163, 184, 0.1);
-}
-
-.bento-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  grid-auto-rows: 200px;
-  gap: 1rem;
-}
-
-.bento-item {
-  border-radius: 1.5rem;
-  overflow: hidden;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  backface-visibility: hidden;
-  transform: translate3d(0, 0, 0);
-}
-
-/* Scrollbar — aligned with cyan accent */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: var(--background);
-}
-
+/* ─── Scrollbar ───────────────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, #22d3ee, #0ea5e9);
+  background: linear-gradient(180deg, #7C3AED, #06B6D4);
   border-radius: 10px;
 }
+::-webkit-scrollbar-thumb:hover { background: #A855F7; }
 
-::-webkit-scrollbar-thumb:hover {
-  background: #06b6d4;
-}
+/* ─── Layout ──────────────────────────────────────────────────────────────── */
+@layer components {
 
-.text-glow-blue {
-  text-shadow: 0 0 20px rgba(34, 211, 238, 0.45);
-}
-
-.border-glow-blue {
-  box-shadow: 0 0 24px rgba(34, 211, 238, 0.25);
-}
-
-.outline-glow {
-  box-shadow: 0 0 14px rgba(34, 211, 238, 0.4);
-}
-
-@keyframes progress-grow {
-  0% {
-    width: 0%;
+  .dtl-section {
+    @apply relative mx-auto max-w-[1320px] px-4 sm:px-6 lg:px-8;
   }
-  100% {
-    width: 100%;
+
+  /* keep old alias so shared components don't break */
+  .portal-section {
+    @apply relative mx-auto max-w-[1320px] px-4 sm:px-6 lg:px-8;
+  }
+
+  /* ── Kicker labels — works on dark AND light backgrounds ── */
+  .dtl-kicker {
+    @apply mb-5 flex items-center gap-3 font-sans text-xs font-semibold uppercase tracking-[0.16em] text-dtl-purple;
+  }
+  .dtl-kicker-line {
+    @apply h-px w-6 shrink-0 rounded-full bg-gradient-to-r from-dtl-purple to-dtl-cyan;
+  }
+
+  /* keep portal aliases */
+  .portal-kicker      { @apply dtl-kicker; }
+  .portal-kicker-line { @apply dtl-kicker-line; }
+
+  /* ── Headlines — dark sections ── */
+  .dtl-headline {
+    @apply font-display font-bold tracking-tight text-white;
+  }
+  /* ── Headlines — light sections ── */
+  .dtl-headline-l {
+    @apply font-display font-bold tracking-tight;
+    color: var(--dtl-slate-900);
+  }
+  .portal-headline { @apply dtl-headline; }
+
+  .dtl-gradient-text {
+    @apply bg-dtl-gradient bg-clip-text text-transparent;
+  }
+
+  /* ── Body text — dark sections ── */
+  .dtl-body {
+    @apply text-base font-normal leading-[1.7] text-slate-400 md:text-lg;
+  }
+  .dtl-body-sm {
+    @apply text-sm font-normal leading-relaxed text-slate-500;
+  }
+  /* ── Body text — light sections ── */
+  .dtl-body-l {
+    @apply text-base font-normal leading-[1.7] md:text-lg;
+    color: var(--dtl-slate-600);
+  }
+  .dtl-body-sm-l {
+    @apply text-sm font-normal leading-relaxed;
+    color: var(--dtl-slate-600);
+  }
+  .portal-body      { @apply dtl-body; }
+  .portal-body-muted{ @apply dtl-body-sm; }
+
+  /* ── Cards — dark sections ── */
+  .dtl-card {
+    @apply rounded-2xl border border-white/[0.07] bg-gradient-to-br from-white/[0.05] to-transparent
+           transition-[border-color,box-shadow,background-color] duration-300 ease-out;
+    box-shadow: 0 2px 20px -6px rgba(0,0,0,0.4);
+  }
+  .dtl-card:hover {
+    border-color: rgba(124,58,237,0.25);
+    box-shadow: 0 8px 32px -8px rgba(124,58,237,0.2);
+  }
+
+  /* ── Cards — light sections ── */
+  .dtl-card-l {
+    @apply rounded-2xl border bg-white
+           transition-[border-color,box-shadow] duration-300 ease-out;
+    border-color: var(--dtl-slate-200);
+    box-shadow: 0 2px 16px -4px rgba(0,0,0,0.07);
+  }
+  .dtl-card-l:hover {
+    border-color: rgba(124,58,237,0.3);
+    box-shadow: 0 8px 32px -8px rgba(124,58,237,0.12);
+  }
+
+  /* keep old card classes */
+  .portal-card        { @apply dtl-card; }
+  .portal-card:hover  { @apply [border-color:rgba(124,58,237,0.25)]; }
+  .solutions-card     { @apply dtl-card; }
+  .solutions-card:hover { border-color: rgba(124,58,237,0.25); }
+
+  /* ── CTAs — primary (works on dark + brand sections) ── */
+  .dtl-cta-primary {
+    @apply inline-flex items-center justify-center rounded-full
+           bg-dtl-gradient px-7 py-3.5
+           font-sans text-sm font-semibold tracking-wide text-white
+           shadow-cta transition-[filter,transform] duration-200 ease-out
+           hover:brightness-110 active:scale-[0.98]
+           focus-visible:outline-none focus-visible:ring-2
+           focus-visible:ring-dtl-purple/80 focus-visible:ring-offset-2
+           focus-visible:ring-offset-dtl-void
+           sm:px-9 sm:py-4;
+  }
+  /* ── CTA primary inverted — white bg for use on brand/gradient sections ── */
+  .dtl-cta-primary-inv {
+    @apply inline-flex items-center justify-center rounded-full
+           bg-white px-7 py-3.5
+           font-sans text-sm font-semibold tracking-wide
+           transition-[filter,transform] duration-200 ease-out
+           hover:brightness-95 active:scale-[0.98]
+           focus-visible:outline-none focus-visible:ring-2
+           focus-visible:ring-white/80 focus-visible:ring-offset-2
+           sm:px-9 sm:py-4;
+    color: #4C1D95;
+  }
+  .dtl-cta-secondary {
+    @apply inline-flex items-center justify-center rounded-full
+           border border-white/[0.12] bg-white/[0.04] px-7 py-3.5
+           font-sans text-sm font-semibold tracking-wide text-slate-200
+           transition-[border-color,background-color,transform] duration-200 ease-out
+           hover:border-dtl-purple/40 hover:bg-white/[0.07] active:scale-[0.98]
+           focus-visible:outline-none focus-visible:ring-2
+           focus-visible:ring-dtl-purple/60 focus-visible:ring-offset-2
+           focus-visible:ring-offset-dtl-void
+           sm:px-9 sm:py-4;
+  }
+  /* ── CTA secondary inverted — white outline for brand/gradient sections ── */
+  .dtl-cta-secondary-inv {
+    @apply inline-flex items-center justify-center rounded-full
+           border border-white/40 bg-white/10 px-7 py-3.5
+           font-sans text-sm font-semibold tracking-wide text-white
+           transition-[border-color,background-color,transform] duration-200 ease-out
+           hover:border-white/70 hover:bg-white/20 active:scale-[0.98]
+           focus-visible:outline-none focus-visible:ring-2
+           focus-visible:ring-white/60 focus-visible:ring-offset-2
+           sm:px-9 sm:py-4;
+  }
+
+  /* keep old CTA classes */
+  .portal-cta-primary   { @apply dtl-cta-primary; }
+  .portal-cta-secondary { @apply dtl-cta-secondary; }
+
+  /* ── Skip link ── */
+  .skip-link {
+    @apply fixed left-4 top-24 z-[100] -translate-y-[220%] rounded-lg
+           bg-dtl-purple px-4 py-2.5 text-sm font-semibold text-white
+           shadow-lg opacity-0 transition-[transform,opacity] duration-200
+           focus:translate-y-0 focus:opacity-100 focus:outline-none
+           focus:ring-2 focus:ring-white/60
+           focus-visible:translate-y-0 focus-visible:opacity-100;
   }
 }
 
-.animate-progress {
-  animation: progress-grow 60s linear infinite;
+/* ─── Section backgrounds ─────────────────────────────────────────────────── */
+.dtl-bg-void    { background: #050714; }
+.dtl-bg-raise   { background: #080c1e; }
+.dtl-bg-surface { background: linear-gradient(to bottom, #050714, #07091c 50%, #050714); }
+
+/* Light section backgrounds */
+.dtl-bg-light   { background: #F8FAFC; }
+.dtl-bg-subtle  { background: #F1F5F9; }
+
+/* Brand gradient — for CTA / accent sections */
+.dtl-bg-brand {
+  background: linear-gradient(135deg, #3B0764 0%, #6D28D9 30%, #7C3AED 55%, #0891B2 100%);
 }
 
-.pause-on-hover:hover .animate-progress {
-  animation-play-state: paused;
+/* ─── Section dividers ────────────────────────────────────────────────────── */
+.dtl-border-dark  { border-top: 1px solid rgba(255,255,255,0.06); }
+.dtl-border-light { border-top: 1px solid #E2E8F0; }
+
+/* ─── Glass utilities ─────────────────────────────────────────────────────── */
+/* No backdrop-filter on scroll-painted elements — causes 15-30% FPS drop     */
+.glass {
+  background: rgba(10, 15, 30, 0.82);
+  border: 1px solid rgba(255, 255, 255, 0.07);
 }
 
-@media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto !important;
-  }
+/* Only use backdrop-blur on the sticky nav — 1 element, acceptable cost */
+.glass-nav,
+#dtl-nav.is-scrolled {
+  background: rgba(5, 7, 20, 0.88);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
 }
 
-/* 
- * Performance Optimized Marquee 
- * Running on the Compositor Thread (GPU) 
- */
-.portfolio-marquee-track {
-  display: flex;
-  width: max-content;
-  gap: 2.5rem; /* md:gap-10 equivalent */
+/* Light section glass — for cards on light bg */
+.glass-light {
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(226,232,240,0.8);
+  box-shadow: 0 4px 24px -6px rgba(0,0,0,0.08);
+}
+
+/* ─── Gradient border via pseudo ─────────────────────────────────────────── */
+.dtl-gradient-border {
+  position: relative;
+}
+.dtl-gradient-border::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg, rgba(124,58,237,0.5), rgba(6,182,212,0.5));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+.dtl-gradient-border:hover::before { opacity: 1; }
+
+/* ─── Marquee fade mask ───────────────────────────────────────────────────── */
+.dtl-marquee-wrapper {
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%);
+  mask-image: linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%);
+  overflow: hidden;
+}
+
+/* Promote marquee rows to own layer — prevents repaint during scroll */
+.animate-marquee-left,
+.animate-marquee-right {
   will-change: transform;
-  backface-visibility: hidden;
-  perspective: 1000;
-  -webkit-backface-visibility: hidden;
 }
 
-.portfolio-marquee-track.is-paused {
-  animation-play-state: paused;
+/* ─── Glow utilities ──────────────────────────────────────────────────────── */
+.text-glow-purple {
+  text-shadow: 0 0 32px rgba(124,58,237,0.5);
+}
+.text-glow-cyan {
+  text-shadow: 0 0 24px rgba(6,182,212,0.45);
+}
+
+/* ─── Scroll indicator dot ────────────────────────────────────────────────── */
+@keyframes scrollDot {
+  0%   { transform: translateY(-100%); opacity: 0; }
+  20%  { opacity: 1; }
+  80%  { opacity: 1; }
+  100% { transform: translateY(200%);  opacity: 0; }
+}
+
+/* ─── CSS Scroll-driven section reveal (compositor thread, no JS) ─────────
+   Chrome 115+, Edge 115+, Safari 18+. Others get instant display.
+   ─────────────────────────────────────────────────────────────────────── */
+@supports (animation-timeline: scroll()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .dtl-scroll-reveal {
+      animation: dtlReveal linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 35%;
+    }
+  }
+}
+
+@keyframes dtlReveal {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── Step connector line ─────────────────────────────────────────────────── */
+.dtl-step-line {
+  stroke-dasharray: 200;
+  stroke-dashoffset: 200;
+  transition: stroke-dashoffset 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.dtl-step-line.is-visible {
+  stroke-dashoffset: 0;
+}
+
+/* ─── 3D card tilt — promote GPU layer only on hover ─────────────────────── */
+.dtl-card:hover,
+.dtl-card-l:hover {
+  will-change: transform;
+}
+.dtl-card:not(:hover),
+.dtl-card-l:not(:hover) {
+  will-change: auto;
+}
+
+/* ─── Utility: hide scrollbar but keep scrollability ─────────────────────── */
+.scrollbar-none {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
 }

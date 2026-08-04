@@ -6,10 +6,10 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 
-const NAV = [
-  { label: "Solutions", hash: "solutions" },
-  { label: "Portfolio", hash: "portfolio" },
-  { label: "About", hash: "about" },
+const NAV_LINKS = [
+  { label: "Services",    hash: "services" },
+  { label: "How We Work", hash: "how-it-works" },
+  { label: "Our Stack",   hash: "tech-stack" },
 ] as const;
 
 function sectionHref(pathname: string, hash: string) {
@@ -19,82 +19,85 @@ function sectionHref(pathname: string, hash: string) {
 const Navbar = () => {
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
+    // Direct DOM class toggle — zero React re-renders on scroll
+    const nav = document.getElementById("dtl-nav");
     let ticking = false;
-    const handleScroll = () => {
-      if (!ticking) {
-        ticking = true;
-        window.requestAnimationFrame(() => {
-          ticking = false;
-          const next = window.scrollY > 24;
-          setScrolled((prev) => (prev === next ? prev : next));
-        });
-      }
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        ticking = false;
+        const isScrolled = window.scrollY > 24;
+        if (isScrolled !== scrolled) setScrolled(isScrolled);
+        // Also toggle class directly so style updates skip React entirely
+        nav?.classList.toggle("is-scrolled", isScrolled);
+      });
     };
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
-    if (mobileMenuOpen) {
+    if (mobileOpen) {
       const prev = document.body.style.overflow;
       document.body.style.overflow = "hidden";
-      return () => {
-        document.body.style.overflow = prev;
-      };
+      return () => { document.body.style.overflow = prev; };
     }
-  }, [mobileMenuOpen]);
+  }, [mobileOpen]);
 
-  useEffect(() => {
-    setMobileMenuOpen(false);
-  }, [pathname]);
+  useEffect(() => { setMobileOpen(false); }, [pathname]);
 
-  const contactActive = pathname === "/contact";
+  const onContact = pathname === "/contact";
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50">
-      {/* Subtle top accent line */}
+    <header className="fixed inset-x-0 top-0 z-50">
+      {/* Top accent line */}
       <div
-        className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-cyan-500/40 to-transparent"
+        className="pointer-events-none absolute inset-x-0 top-0 h-px"
+        style={{ background: "linear-gradient(90deg, transparent, rgba(124,58,237,0.5) 40%, rgba(6,182,212,0.5) 60%, transparent)" }}
         aria-hidden
       />
 
       <nav
-        className={`relative border-b border-white/[0.06] bg-portal-void bg-portal-mesh transition-[box-shadow] duration-200 ease-out ${
-          scrolled ? "shadow-nav-scrolled backdrop-blur-md backdrop-saturate-150" : ""
+        id="dtl-nav"
+        className={`relative border-b border-white/[0.06] bg-dtl-void transition-shadow duration-200 ${
+          scrolled ? "glass-nav shadow-nav-scrolled" : ""
         }`}
         aria-label="Primary"
       >
-        <div className="portal-section flex h-[5rem] items-center md:h-[5.5rem]">
-          {/* Left: logo — shrink-0 on small screens so “Get in touch” keeps space; flex-1 on lg for centered pill */}
-          <div className="flex min-w-0 shrink-0 justify-start lg:min-w-0 lg:flex-1">
+        <div className="dtl-section flex h-[5rem] items-center md:h-[5.5rem]">
+
+          {/* Logo */}
+          <div className="flex flex-1 justify-start">
             <Link
               href="/"
-              className="group relative z-[60] flex max-w-[100%] shrink-0 items-center outline-none ring-offset-2 ring-offset-portal-void focus-visible:ring-2 focus-visible:ring-cyan-400/80"
+              className="group relative z-[60] flex items-center outline-none focus-visible:ring-2 focus-visible:ring-dtl-purple/80 focus-visible:ring-offset-2 focus-visible:ring-offset-dtl-void rounded-lg"
             >
-              <span className="relative h-9 w-[7.25rem] min-h-[2.25rem] min-[380px]:w-[8rem] sm:h-10 sm:w-[9rem] md:h-11 md:w-[11rem] lg:h-12 lg:w-[12.5rem] xl:h-[3.25rem] xl:w-[14rem]">
+              <span className="relative block h-12 w-16 sm:h-14 sm:w-20 md:h-16 md:w-[4.75rem] lg:h-[4.5rem] lg:w-[5.5rem]">
                 <Image
-                  src="/assets/dual-logo.png"
-                  alt="DualTech Labs — Home"
+                  src="/assets/logo-light-removebg-preview.png"
+                  alt="DualTech Labs"
                   fill
-                  className="object-contain object-left brightness-0 invert transition-[filter,opacity] duration-300 group-hover:opacity-100 group-hover:drop-shadow-[0_0_24px_rgba(34,211,238,0.28)] opacity-[0.92] drop-shadow-[0_1px_14px_rgba(34,211,238,0.14)]"
+                  className="object-contain object-left opacity-90 transition-opacity duration-300 group-hover:opacity-100 group-hover:drop-shadow-[0_0_20px_rgba(124,58,237,0.4)]"
                   priority
-                  sizes="(max-width: 640px) 180px, (max-width: 1024px) 220px, 260px"
+                  sizes="(max-width: 640px) 64px, (max-width: 768px) 80px, (max-width: 1024px) 76px, 88px"
                 />
               </span>
             </Link>
           </div>
 
-          {/* Center: pill nav — aligned with page typography (slate + cyan accents) */}
-          <div className="hidden shrink-0 items-center justify-center lg:flex">
-            <div className="flex items-center rounded-full border border-white/[0.08] bg-gradient-to-b from-white/[0.07] to-white/[0.03] p-1 shadow-inner shadow-black/20">
-              {NAV.map(({ label, hash }) => (
+          {/* Desktop nav pill */}
+          <div className="hidden items-center lg:flex">
+            <div className="flex items-center gap-1 rounded-full border border-white/[0.07] bg-white/[0.04] p-1">
+              {NAV_LINKS.map(({ label, hash }) => (
                 <Link
                   key={hash}
                   href={sectionHref(pathname, hash)}
-                  className="rounded-full px-4 py-2 font-sans text-sm font-medium text-slate-300 transition-colors hover:bg-white/[0.08] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400/50"
+                  className="rounded-full px-4 py-2 font-sans text-sm font-medium text-slate-400 transition-colors hover:bg-white/[0.07] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-dtl-purple/50"
                 >
                   {label}
                 </Link>
@@ -102,109 +105,87 @@ const Navbar = () => {
             </div>
           </div>
 
-          {/* Right: CTA + menu — mirror left flex-1 so center stays geometrically centered */}
-          <div className="flex min-w-0 flex-1 items-center justify-end gap-2 sm:gap-3 md:gap-5">
+          {/* CTA + hamburger */}
+          <div className="flex flex-1 items-center justify-end gap-2 min-w-0">
             <Link
               href="/contact"
-              aria-current={contactActive ? "page" : undefined}
-              className={`relative z-[60] inline-flex max-w-[min(100%,11rem)] shrink-0 items-center justify-center overflow-hidden rounded-full px-3.5 py-2.5 text-[13px] font-sans font-semibold leading-tight tracking-wide transition-[filter,box-shadow,transform] duration-200 ease-out min-[380px]:max-w-none min-[380px]:px-5 min-[380px]:text-sm sm:px-7 sm:py-3 ${
-                contactActive
-                  ? "bg-cyan-500 text-portal-void shadow-cta ring-1 ring-cyan-400/50"
-                  : "bg-gradient-to-r from-cyan-500 to-sky-600 text-white shadow-cta hover:brightness-110 active:scale-[0.98]"
-              }`}
+              aria-current={onContact ? "page" : undefined}
+              className="relative z-[60] inline-flex items-center justify-center rounded-full px-3 py-2 font-sans text-xs font-semibold text-white transition-[filter,transform] duration-200 hover:brightness-110 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-dtl-purple/80 focus-visible:ring-offset-2 focus-visible:ring-offset-dtl-void sm:px-5 sm:py-2.5 sm:text-sm"
+              style={{ background: "linear-gradient(135deg,#7C3AED,#06B6D4)" }}
             >
-              <span className="relative z-10">Get in touch</span>
-              {!contactActive && (
-                <span
-                  className="absolute inset-0 bg-gradient-to-t from-white/0 via-white/10 to-white/20 opacity-0 transition-opacity hover:opacity-100"
-                  aria-hidden
-                />
-              )}
+              Get in Touch
             </Link>
 
             <button
               type="button"
-              onClick={() => setMobileMenuOpen((o) => !o)}
-              className="relative z-[60] flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-white/[0.1] bg-white/[0.05] text-slate-200 transition-colors hover:border-cyan-500/25 hover:bg-white/[0.08] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400/60 lg:hidden"
-              aria-expanded={mobileMenuOpen}
-              aria-controls="mobile-menu"
-              aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+              onClick={() => setMobileOpen((o) => !o)}
+              className="relative z-[60] flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/[0.09] bg-white/[0.04] text-slate-300 transition-colors hover:border-dtl-purple/30 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-dtl-purple/60 lg:hidden"
+              aria-expanded={mobileOpen}
+              aria-label={mobileOpen ? "Close menu" : "Open menu"}
             >
-              <span className="sr-only">Menu</span>
-              <span className="relative block h-5 w-5">
-                <span
-                  className={`absolute left-0 top-1 h-0.5 w-5 rounded-full bg-current transition-all duration-300 ${
-                    mobileMenuOpen ? "top-2.5 rotate-45" : ""
-                  }`}
-                />
-                <span
-                  className={`absolute left-0 top-2.5 h-0.5 w-5 rounded-full bg-current transition-all duration-300 ${
-                    mobileMenuOpen ? "opacity-0" : ""
-                  }`}
-                />
-                <span
-                  className={`absolute left-0 top-4 h-0.5 w-5 rounded-full bg-current transition-all duration-300 ${
-                    mobileMenuOpen ? "top-2.5 -rotate-45" : ""
-                  }`}
-                />
+              <span className="relative block h-4 w-5">
+                <span className={`absolute inset-x-0 top-0 h-0.5 rounded-full bg-current transition-all duration-300 ${mobileOpen ? "top-[7px] rotate-45" : ""}`} />
+                <span className={`absolute inset-x-0 top-[7px] h-0.5 rounded-full bg-current transition-opacity duration-300 ${mobileOpen ? "opacity-0" : ""}`} />
+                <span className={`absolute inset-x-0 bottom-0 h-0.5 rounded-full bg-current transition-all duration-300 ${mobileOpen ? "top-[7px] -rotate-45 bottom-auto" : ""}`} />
               </span>
             </button>
           </div>
         </div>
       </nav>
 
+      {/* Mobile menu */}
       <AnimatePresence>
-        {mobileMenuOpen && (
+        {mobileOpen && (
           <motion.div
-            key="mobile-nav"
+            key="mobile"
             className="fixed inset-0 z-[55] lg:hidden"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
+            transition={{ duration: 0.18 }}
           >
             <button
               type="button"
-              className="absolute inset-0 bg-portal-void/75 backdrop-blur-sm"
+              className="absolute inset-0 bg-dtl-void/80 backdrop-blur-sm"
               aria-hidden
               tabIndex={-1}
-              onClick={() => setMobileMenuOpen(false)}
+              onClick={() => setMobileOpen(false)}
             />
             <motion.div
-              id="mobile-menu"
               role="dialog"
               aria-modal="true"
-              aria-label="Site navigation"
-              initial={{ opacity: 0, y: -12 }}
+              aria-label="Navigation"
+              initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -12 }}
-              transition={{ type: "spring", damping: 28, stiffness: 320 }}
-              className="absolute left-4 right-4 top-[5.5rem] z-[56] max-h-[min(70vh,calc(100dvh-6rem))] overflow-y-auto rounded-2xl border border-white/[0.08] bg-portal-void/98 bg-portal-mesh p-6 shadow-nav-scrolled backdrop-blur-xl md:top-[6rem]"
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ type: "spring", damping: 26, stiffness: 300 }}
+              className="absolute inset-x-4 top-[5.5rem] z-[56] overflow-hidden rounded-2xl border border-white/[0.07] bg-dtl-surface p-5 shadow-nav-scrolled backdrop-blur-xl"
             >
               <div className="flex flex-col gap-1">
-                {NAV.map(({ label, hash }, i) => (
+                {NAV_LINKS.map(({ label, hash }, i) => (
                   <motion.div
                     key={hash}
                     initial={{ opacity: 0, x: -8 }}
                     animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.05 * i }}
+                    transition={{ delay: 0.04 * i }}
                   >
                     <Link
                       href={sectionHref(pathname, hash)}
-                      onClick={() => setMobileMenuOpen(false)}
+                      onClick={() => setMobileOpen(false)}
                       className="block rounded-xl px-4 py-3 font-sans text-base font-medium text-slate-300 transition-colors hover:bg-white/[0.06] hover:text-white"
                     >
                       {label}
                     </Link>
                   </motion.div>
                 ))}
-                <div className="mt-4 border-t border-white/10 pt-4">
+                <div className="mt-3 border-t border-white/[0.07] pt-3">
                   <Link
                     href="/contact"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="flex w-full items-center justify-center rounded-xl bg-gradient-to-r from-cyan-500 to-sky-600 py-3.5 font-sans text-sm font-semibold text-white shadow-cta"
+                    onClick={() => setMobileOpen(false)}
+                    className="flex w-full items-center justify-center rounded-xl py-3.5 font-sans text-sm font-semibold text-white"
+                    style={{ background: "linear-gradient(135deg,#7C3AED,#06B6D4)" }}
                   >
-                    Get in touch
+                    Get in Touch
                   </Link>
                 </div>
               </div>
