@@ -1,4 +1,5 @@
 import { getSiteUrl } from "@/config/site";
+import { contactEmail } from "@/config/contact";
 
 const DESCRIPTION =
   "DualTech Labs delivers custom software development, AI integration, cloud solutions, mobile engineering, and digital transformation services worldwide. Your idea, built right.";
@@ -15,15 +16,31 @@ export default function SeoJsonLd() {
         name: "DualTech Labs",
         url: base,
         description: DESCRIPTION,
+        email: contactEmail,
         logo: {
           "@type": "ImageObject",
           url: `${base}/assets/logo-light-removebg-preview.png`,
+          width: 512,
+          height: 512,
         },
-        contactPoint: {
-          "@type": "ContactPoint",
-          contactType: "customer service",
-          availableLanguage: "English",
-        },
+        // Add social/directory profile URLs here once created:
+        // sameAs: ["https://www.linkedin.com/company/dualtechlabs", "https://clutch.co/profile/dualtechlabs"],
+        contactPoint: [
+          {
+            "@type": "ContactPoint",
+            contactType: "sales",
+            email: contactEmail,
+            availableLanguage: ["English"],
+            areaServed: "Worldwide",
+          },
+          {
+            "@type": "ContactPoint",
+            contactType: "customer service",
+            email: contactEmail,
+            availableLanguage: ["English"],
+            areaServed: "Worldwide",
+          },
+        ],
         areaServed: "Worldwide",
         knowsAbout: [
           "Custom Software Development",
@@ -91,6 +108,46 @@ export default function SeoJsonLd() {
             acceptedAnswer: {
               "@type": "Answer",
               text: "Reach out via email or WhatsApp. Share your idea, rough or refined — we'll respond within one business day with honest feedback on approach, timeline, and fit.",
+            },
+          },
+          {
+            "@type": "Question",
+            name: "How much does custom software development cost?",
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: "Custom software development costs vary based on complexity, timeline, and team size. A simple MVP typically ranges from $15,000–$50,000. A full-featured platform can range from $50,000–$250,000+. DualTech Labs provides transparent project estimates after a free consultation.",
+            },
+          },
+          {
+            "@type": "Question",
+            name: "How long does it take to build custom software?",
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: "A basic MVP takes 6–12 weeks. A full product with multiple features typically takes 3–6 months. Timeline depends on scope, integrations, and feedback cycles. DualTech Labs works in short delivery sprints so clients see progress every 2 weeks.",
+            },
+          },
+          {
+            "@type": "Question",
+            name: "What is the difference between custom software and SaaS?",
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: "SaaS (Software as a Service) is a ready-made product you subscribe to — fast to start but limited to what the vendor offers. Custom software is built specifically for your business — it fits your exact workflow, integrates with your systems, and you own it outright. Custom is better when your process is unique or when off-the-shelf tools create more workarounds than solutions.",
+            },
+          },
+          {
+            "@type": "Question",
+            name: "Does DualTech Labs sign NDAs?",
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: "Yes. DualTech Labs signs NDAs before any project discussion. Confidentiality is standard practice for all client engagements.",
+            },
+          },
+          {
+            "@type": "Question",
+            name: "Can DualTech Labs help integrate AI into an existing product?",
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: "Yes. DualTech Labs specialises in AI integration — adding features like intelligent automation, natural language processing, recommendation engines, and predictive analytics to existing software products. We work with OpenAI, Anthropic, and open-source models depending on requirements.",
             },
           },
         ],
