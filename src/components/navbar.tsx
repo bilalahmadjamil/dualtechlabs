@@ -31,14 +31,12 @@ const Navbar = () => {
       requestAnimationFrame(() => {
         ticking = false;
         const isScrolled = window.scrollY > 24;
-        if (isScrolled !== scrolled) setScrolled(isScrolled);
-        // Also toggle class directly so style updates skip React entirely
+        setScrolled(isScrolled);
         nav?.classList.toggle("is-scrolled", isScrolled);
       });
     };
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -121,6 +119,7 @@ const Navbar = () => {
               onClick={() => setMobileOpen((o) => !o)}
               className="relative z-[60] flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/[0.09] bg-white/[0.04] text-slate-300 transition-colors hover:border-dtl-purple/30 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-dtl-purple/60 lg:hidden"
               aria-expanded={mobileOpen}
+              aria-controls="dtl-mobile-menu"
               aria-label={mobileOpen ? "Close menu" : "Open menu"}
             >
               <span className="relative block h-4 w-5">
@@ -152,6 +151,7 @@ const Navbar = () => {
               onClick={() => setMobileOpen(false)}
             />
             <motion.div
+              id="dtl-mobile-menu"
               role="dialog"
               aria-modal="true"
               aria-label="Navigation"

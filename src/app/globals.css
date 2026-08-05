@@ -148,7 +148,7 @@ body {
 
   /* keep old card classes */
   .portal-card        { @apply dtl-card; }
-  .portal-card:hover  { @apply [border-color:rgba(124,58,237,0.25)]; }
+  .portal-card:hover  { border-color: rgba(124,58,237,0.25); }
   .solutions-card     { @apply dtl-card; }
   .solutions-card:hover { border-color: rgba(124,58,237,0.25); }
 

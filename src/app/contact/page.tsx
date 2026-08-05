@@ -3,11 +3,26 @@ import Link from "next/link";
 import { getMailtoUrl, getWhatsAppUrl, contactEmail } from "@/config/contact";
 import { getSiteUrl } from "@/config/site";
 
+const contactDescription =
+  "Get in touch with DualTech Labs. Email us or start a WhatsApp conversation — we respond within one business day.";
+
 export const metadata: Metadata = {
   title: "Contact",
-  description:
-    "Get in touch with DualTech Labs. Email us or start a WhatsApp conversation — we respond within one business day.",
+  description: contactDescription,
   alternates: { canonical: `${getSiteUrl()}/contact` },
+  openGraph: {
+    type: "website",
+    siteName: "DualTech Labs",
+    title: "Contact | DualTech Labs",
+    description: contactDescription,
+    url: "/contact",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Contact | DualTech Labs",
+    description: contactDescription,
+  },
+  robots: { index: true, follow: true },
 };
 
 export default function ContactPage() {
