@@ -9,7 +9,13 @@ const contactDescription =
 export const metadata: Metadata = {
   title: "Contact",
   description: contactDescription,
-  alternates: { canonical: `${getSiteUrl()}/contact` },
+  alternates: {
+    canonical: `${getSiteUrl()}/contact`,
+    languages: {
+      "en": `${getSiteUrl()}/contact`,
+      "x-default": `${getSiteUrl()}/contact`,
+    },
+  },
   openGraph: {
     type: "website",
     siteName: "DualTech Labs",

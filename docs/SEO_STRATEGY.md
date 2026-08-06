@@ -333,15 +333,30 @@ You can still create multiple service pages — just write each one properly. Ai
 
 ## 5. Implementation Roadmap (Realistic Timeline)
 
-### Week 1–2 (Do This Week)
-- [ ] Submit sitemap in Google Search Console → Sitemaps
-- [ ] Request Indexing: homepage + contact (GSC → URL Inspection)
-- [ ] Create **Clutch.co** profile (highest priority — free)
-- [ ] Create **GoodFirms** profile (free)
-- [ ] Create **LinkedIn company page** for DualTech Labs
-- [ ] Create **Crunchbase** profile
+### Week 1–2 — ✅ COMPLETED (August 6, 2026)
 
-### Week 3–6 (First Service Pages)
+#### Technical SEO (code)
+- [x] Add hreflang tags (`en` + `x-default`) to `layout.tsx` and `contact/page.tsx`
+- [x] Explicitly allow AI bots in `robots.ts` (GPTBot, PerplexityBot, ClaudeBot)
+
+#### Directories & Entity Signals
+- [x] Submit sitemap in Google Search Console → **Success · 2 pages discovered**
+- [x] Request Indexing: homepage + contact (GSC → URL Inspection)
+- [x] Create **Clutch.co** profile — live, pending verification
+- [x] Create **GoodFirms** profile — live, pending approval
+- [x] Create **LinkedIn company page** — live at linkedin.com/company/dualtechlabs
+- [x] Create **Crunchbase** profile — live at crunchbase.com
+- [x] Create **Google Business Profile** — live, service business, global service areas added
+
+#### Current SEO State (August 6, 2026)
+- Branded search ("DualTech Labs"): ranking on page 1 ✅
+- Directories indexed by Google: not yet (allow 2–4 weeks)
+- Non-branded keyword rankings: none yet (expected — 3–6 months)
+- GSC impressions: check again in 2 weeks for first data
+
+---
+
+### Week 3–6 (Next Step — First Service Pages)
 - [ ] Write `/services/custom-software-development` page
   - Target: "custom software development company for startups"
   - Include: what it is, who it's for, process, cost range, timeline, FAQ (5 questions), CTA
@@ -359,6 +374,8 @@ You can still create multiple service pages — just write each one properly. Ai
 - [ ] Write second blog post: "Custom software vs SaaS — which is right for your business?" (comparison → AI Overview target)
 - [ ] Internal link every service page to every other service page
 - [ ] Add service pages to Clutch profile description
+- [ ] Add portfolio entries to GoodFirms (unlocks after listing approval)
+- [ ] Update `seo-json-ld.tsx` sameAs array with Clutch, LinkedIn, Crunchbase URLs
 
 ### Month 3
 - [ ] Write `/services/cloud-devops` page
@@ -372,6 +389,7 @@ You can still create multiple service pages — just write each one properly. Ai
 - [ ] 2 blog posts per month (mix of problem-aware + comparison)
 - [ ] Reach out for 1–2 guest posts on business/tech publications
 - [ ] Collect first Clutch reviews from real clients
+- [ ] Collect first GoodFirms reviews from real clients
 - [ ] Monitor GSC: which queries are getting impressions? Write more content on those topics
 - [ ] Add author bio schema to all blog posts
 
@@ -382,6 +400,20 @@ You can still create multiple service pages — just write each one properly. Ai
 - [ ] Update service pages with new project examples quarterly
 
 ---
+
+## 5b. Service Pages — Built (August 2026)
+
+All 12 service pages are live under `/services/[slug]`, statically generated (SSG), each with animated thematic hero, FAQPage + BreadcrumbList JSON-LD, and unique metadata. Content lives in `src/lib/services-data.ts`.
+
+**Pricing decision — DO NOT hardcode prices or timelines.** A deep-research pass (adversarially verified) refuted 96% of published B2B conversion statistics as unreliable marketing content. The one high-confidence survivor: **ROI / capital-investment framing outperforms cost framing.** Hardcoded price tiers and week/month ranges were therefore removed because they (1) go stale and become a maintenance burden, (2) anchor the buyer to a ceiling before scoping, (3) mislead when the same "MVP" varies 5×.
+
+**What replaced them (the "Investment" section on every service page):**
+1. **ROI framing intro** (`investmentIntro`) — positions the build as a capital investment, not an expense
+2. **Engagement models** (`ENGAGEMENT_MODELS`, shared) — Fixed Scope / Time & Materials / Dedicated Team
+3. **Cost drivers** (`costFactors`, per-service) — the factors that shape an estimate; educates + qualifies
+4. **CTA** — "Get your estimate" → scoping call
+
+This approach is timeless (never needs updating as rates change) and converts educated buyers rather than tyre-kickers. Keep it. If adding real project examples later, add them as case-study content — never revert to fixed price tiers.
 
 ## 6. Content Templates
 

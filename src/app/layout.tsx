@@ -69,6 +69,10 @@ export const metadata: Metadata = {
   creator: "DualTech Labs",
   alternates: {
     canonical: "/",
+    languages: {
+      "en": "/",
+      "x-default": "/",
+    },
   },
   openGraph: {
     type: "website",

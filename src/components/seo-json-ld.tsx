@@ -115,7 +115,7 @@ export default function SeoJsonLd() {
             name: "How much does custom software development cost?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "Custom software development costs vary based on complexity, timeline, and team size. A simple MVP typically ranges from $15,000–$50,000. A full-featured platform can range from $50,000–$250,000+. DualTech Labs provides transparent project estimates after a free consultation.",
+              text: "There is no honest fixed price for custom software — the same feature can cost very differently depending on scope, integrations, data, compliance, and design. DualTech Labs scopes each project on a free consultation and provides a clear, detailed estimate before any commitment, rather than quoting misleading tiers.",
             },
           },
           {
@@ -123,7 +123,7 @@ export default function SeoJsonLd() {
             name: "How long does it take to build custom software?",
             acceptedAnswer: {
               "@type": "Answer",
-              text: "A basic MVP takes 6–12 weeks. A full product with multiple features typically takes 3–6 months. Timeline depends on scope, integrations, and feedback cycles. DualTech Labs works in short delivery sprints so clients see progress every 2 weeks.",
+              text: "It depends on scope — a focused MVP is far quicker than a full multi-feature product. Rather than promise a number before understanding the project, DualTech Labs scopes the timeline during discovery, then works in short delivery sprints with a working demo every two weeks so clients see real progress continuously.",
             },
           },
           {

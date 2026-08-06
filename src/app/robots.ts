@@ -4,10 +4,24 @@ import { getSiteUrl } from "@/config/site";
 export default function robots(): MetadataRoute.Robots {
   const base = getSiteUrl();
   return {
-    rules: {
-      userAgent: "*",
-      allow: "/",
-    },
+    rules: [
+      {
+        userAgent: "*",
+        allow: "/",
+      },
+      {
+        userAgent: "GPTBot",
+        allow: "/",
+      },
+      {
+        userAgent: "PerplexityBot",
+        allow: "/",
+      },
+      {
+        userAgent: "ClaudeBot",
+        allow: "/",
+      },
+    ],
     sitemap: `${base}/sitemap.xml`,
   };
 }
