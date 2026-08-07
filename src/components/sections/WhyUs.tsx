@@ -8,7 +8,6 @@ const ease: [number, number, number, number] = [0.22, 1, 0.36, 1];
 const CARDS = [
   {
     id: "ownership",
-    num: "01",
     accentColor: "#7C3AED",
     accentAlpha: "rgba(124,58,237,",
     icon: (
@@ -24,7 +23,6 @@ const CARDS = [
   },
   {
     id: "ip",
-    num: "02",
     accentColor: "#A855F7",
     accentAlpha: "rgba(168,85,247,",
     icon: (
@@ -38,7 +36,6 @@ const CARDS = [
   },
   {
     id: "honesty",
-    num: "03",
     accentColor: "#06B6D4",
     accentAlpha: "rgba(6,182,212,",
     icon: (
@@ -98,51 +95,27 @@ export default function WhyUs() {
               initial={{ opacity: 0, y: 32 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.7, ease, delay: 0.12 + i * 0.12 }}
-              className="group relative flex flex-col gap-0 overflow-hidden rounded-2xl border"
+              whileHover={{
+                y: -4,
+                boxShadow: `0 12px 48px -8px ${card.accentAlpha}0.35), inset 0 1px 0 ${card.accentAlpha}0.12)`,
+              }}
+              className="group relative flex flex-col overflow-hidden rounded-2xl border"
               style={{
-                borderColor: `${card.accentAlpha}0.3)`,
-                background: `linear-gradient(155deg, ${card.accentAlpha}0.14) 0%, rgba(12,18,38,0.98) 60%)`,
+                borderColor: `${card.accentAlpha}0.18)`,
+                background: `linear-gradient(155deg, ${card.accentAlpha}0.07) 0%, rgba(12,18,38,0.98) 60%)`,
                 boxShadow: `0 4px 40px -8px ${card.accentAlpha}0.2), inset 0 1px 0 ${card.accentAlpha}0.08)`,
-                transition: "box-shadow 0.3s ease, border-color 0.3s ease",
-              }}
-              onMouseEnter={(e) => {
-                (e.currentTarget as HTMLElement).style.boxShadow = `0 12px 48px -8px ${card.accentAlpha}0.35)`;
-                (e.currentTarget as HTMLElement).style.borderColor = `${card.accentAlpha}0.5)`;
-              }}
-              onMouseLeave={(e) => {
-                (e.currentTarget as HTMLElement).style.boxShadow = `0 4px 40px -8px ${card.accentAlpha}0.2)`;
-                (e.currentTarget as HTMLElement).style.borderColor = `${card.accentAlpha}0.3)`;
               }}
             >
-              {/* Top accent bar */}
-              <div
-                className="h-[3px] w-full shrink-0"
-                style={{ background: `linear-gradient(90deg, ${card.accentColor}, ${card.accentColor}44, transparent)` }}
-              />
-
-              <div className="flex flex-col gap-5 p-8">
-                {/* Number + Icon row */}
-                <div className="flex items-center justify-between">
-                  <div
-                    className="flex h-14 w-14 items-center justify-center rounded-xl transition-transform duration-300 group-hover:scale-105"
-                    style={{
-                      background: `${card.accentAlpha}0.1)`,
-                      border: `1px solid ${card.accentAlpha}0.3)`,
-                      color: card.accentColor,
-                    }}
-                  >
-                    {card.icon}
-                  </div>
-                  <span
-                    className="font-display font-black leading-none select-none"
-                    style={{
-                      fontSize: "3.5rem",
-                      color: `${card.accentAlpha}0.1)`,
-                    }}
-                    aria-hidden
-                  >
-                    {card.num}
-                  </span>
+              <div className="flex flex-col gap-5 p-6 md:p-8">
+                {/* Icon */}
+                <div
+                  className="flex h-14 w-14 items-center justify-center rounded-xl"
+                  style={{
+                    background: `${card.accentAlpha}0.15)`,
+                    color: card.accentColor,
+                  }}
+                >
+                  {card.icon}
                 </div>
 
                 {/* Title */}

@@ -1,10 +1,16 @@
 "use client";
 
-import React, { useState, useEffect, useCallback, useRef } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import Link from "next/link";
-import { motion, AnimatePresence } from "framer-motion";
+import {
+  motion, AnimatePresence,
+  useScroll, useMotionValueEvent,
+  useMotionValue, useSpring, useTransform,
+  useReducedMotion,
+} from "framer-motion";
 import { ServiceBgs } from "@/lib/service-bgs";
 
+// ─── Navigation links ─────────────────────────────────────────────────────────
 const SERVICE_LINKS: Record<string, string> = {
   "custom-software":        "/services/custom-software-development",
   "ai-systems":             "/services/ai-development",
@@ -20,115 +26,70 @@ const SERVICE_LINKS: Record<string, string> = {
   "consulting":             "/services/it-consulting",
 };
 
-// ─── Service icons — one per service, SVG inline ─────────────────────────────
-const ServiceIcons: Record<string, JSX.Element> = {
+// ─── Service icons ────────────────────────────────────────────────────────────
+const ServiceIcons: Record<string, React.ReactElement> = {
   "custom-software": (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="h-[18px] w-[18px]">
-      <polyline points="16 18 22 12 16 6" /><polyline points="8 6 2 12 8 18" />
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6">
+      <polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>
     </svg>
   ),
   "ai-systems": (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="h-[18px] w-[18px]">
-      <path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1H2a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h1a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2z" />
-      <circle cx="7.5" cy="14.5" r="1" /><circle cx="16.5" cy="14.5" r="1" />
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6">
+      <path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1H2a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h1a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2z"/>
+      <circle cx="7.5" cy="14.5" r="1"/><circle cx="16.5" cy="14.5" r="1"/>
     </svg>
   ),
   "cloud-devops": (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="h-[18px] w-[18px]">
-      <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z" />
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6">
+      <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/>
     </svg>
   ),
   "mobile": (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="h-[18px] w-[18px]">
-      <rect x="5" y="2" width="14" height="20" rx="2" /><line x1="12" y1="18" x2="12.01" y2="18" />
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6">
+      <rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/>
     </svg>
   ),
   "ui-ux": (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="h-[18px] w-[18px]">
-      <circle cx="12" cy="12" r="10" /><circle cx="12" cy="12" r="4" />
-      <line x1="4.93" y1="4.93" x2="9.17" y2="9.17" /><line x1="14.83" y1="14.83" x2="19.07" y2="19.07" />
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6">
+      <circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/>
+      <line x1="4.93" y1="4.93" x2="9.17" y2="9.17"/><line x1="14.83" y1="14.83" x2="19.07" y2="19.07"/>
     </svg>
   ),
   "web-platforms": (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="h-[18px] w-[18px]">
-      <rect x="2" y="3" width="20" height="14" rx="2" /><line x1="8" y1="21" x2="16" y2="21" /><line x1="12" y1="17" x2="12" y2="21" />
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6">
+      <rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>
     </svg>
   ),
   "digital-transformation": (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="h-[18px] w-[18px]">
-      <polyline points="17 1 21 5 17 9" /><path d="M3 11V9a4 4 0 0 1 4-4h14" />
-      <polyline points="7 23 3 19 7 15" /><path d="M21 13v2a4 4 0 0 1-4 4H3" />
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6">
+      <polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/>
+      <polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/>
     </svg>
   ),
   "fintech": (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="h-[18px] w-[18px]">
-      <rect x="1" y="4" width="22" height="16" rx="2" /><line x1="1" y1="10" x2="23" y2="10" />
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6">
+      <rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/>
     </svg>
   ),
   "api": (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="h-[18px] w-[18px]">
-      <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
-      <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6">
+      <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+      <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
     </svg>
   ),
   "security": (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="h-[18px] w-[18px]">
-      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6">
+      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
     </svg>
   ),
   "qa": (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="h-[18px] w-[18px]">
-      <polyline points="9 11 12 14 22 4" /><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6">
+      <polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
     </svg>
   ),
   "consulting": (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="h-[18px] w-[18px]">
-      <circle cx="12" cy="12" r="10" /><line x1="12" y1="16" x2="12" y2="12" /><line x1="12" y1="8" x2="12.01" y2="8" />
-    </svg>
-  ),
-};
-
-
-// ─── Phase icons ──────────────────────────────────────────────────────────────
-const PhaseIcons = {
-  discover: (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5">
-      <circle cx="11" cy="11" r="8" /><path d="M21 21l-4.35-4.35" />
-    </svg>
-  ),
-  plan: (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5">
-      <rect x="3" y="3" width="18" height="18" rx="2" /><path d="M3 9h18M9 21V9" />
-    </svg>
-  ),
-  build: (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5">
-      <polyline points="16 18 22 12 16 6" /><polyline points="8 6 2 12 8 18" />
-    </svg>
-  ),
-  test: (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5">
-      <polyline points="9 11 12 14 22 4" /><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
-    </svg>
-  ),
-  launch: (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5">
-      <path d="M22 2L11 13" /><path d="M22 2L15 22l-4-9-9-4 20-7z" />
-    </svg>
-  ),
-  audit: (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5">
-      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><polyline points="14 2 14 8 20 8" /><line x1="16" y1="13" x2="8" y2="13" /><line x1="16" y1="17" x2="8" y2="17" />
-    </svg>
-  ),
-  integrate: (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5">
-      <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" /><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
-    </svg>
-  ),
-  monitor: (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5">
-      <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6">
+      <circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>
     </svg>
   ),
 };
@@ -140,879 +101,544 @@ const SERVICES = [
     title: "Custom Software",
     fullTitle: "Custom Software Development",
     tagline: "We own the architecture, delivery, and hand you the keys.",
-    accentFrom: "#7C3AED",
-    accentTo: "#A855F7",
-    phases: [
-      {
-        num: "01", name: "Discovery", icon: "discover",
-        description: "We start by understanding the real problem, not just the requested feature. Deep-dive sessions map your users, constraints, and success criteria before any code is written.",
-        deliverables: ["Requirements specification", "User journey mapping", "Technical feasibility report", "Project roadmap with milestones"],
-      },
-      {
-        num: "02", name: "Architecture", icon: "plan",
-        description: "We design the system blueprint — database schema, API contracts, service boundaries, and tech stack decisions — all documented before a single line of code.",
-        deliverables: ["System architecture diagram", "API contract definitions", "Database schema design", "Tech stack decision log"],
-      },
-      {
-        num: "03", name: "Development", icon: "build",
-        description: "Agile sprints with weekly working demos. Clean, documented code your future team can maintain. No black boxes, no shortcuts that become your problem later.",
-        deliverables: ["Working software each sprint", "Code repository with docs", "Weekly progress demos", "Technical documentation"],
-      },
-      {
-        num: "04", name: "QA & Testing", icon: "test",
-        description: "Unit, integration, and end-to-end tests. Performance profiling under load. Security review. We find the issues before your users do.",
-        deliverables: ["Test coverage report", "Performance benchmarks", "Security audit results", "Bug-free staging environment"],
-      },
-      {
-        num: "05", name: "Delivery", icon: "launch",
-        description: "Production deployment, full source code handover, runbooks, and onboarding. We stay available post-launch — because launch day is just the beginning.",
-        deliverables: ["Production deployment", "Full source code ownership", "Operations runbook", "30-day post-launch support"],
-      },
-    ],
+    desc: "End-to-end software built to your exact requirements — from system architecture through QA, deployment, and 30-day post-launch support.",
+    accentFrom: "#7C3AED", accentTo: "#A855F7",
   },
   {
     id: "ai-systems",
     title: "AI & Intelligent Systems",
     fullTitle: "AI & Intelligent Systems",
     tagline: "Real AI in real products — not wrappers, not demos.",
-    accentFrom: "#6D28D9",
-    accentTo: "#06B6D4",
-    phases: [
-      {
-        num: "01", name: "Assessment", icon: "discover",
-        description: "We evaluate where AI genuinely adds value vs. where it's hype. Not every problem needs ML. We identify the use cases with real ROI for your specific product.",
-        deliverables: ["AI opportunity audit", "Use case prioritization", "Data readiness assessment", "Build vs. buy recommendation"],
-      },
-      {
-        num: "02", name: "Data Strategy", icon: "plan",
-        description: "Good models need good data. We design your data pipeline, handle labeling strategies, and ensure you're building on a foundation that scales.",
-        deliverables: ["Data pipeline architecture", "Labeling & annotation strategy", "Data quality framework", "Training dataset preparation"],
-      },
-      {
-        num: "03", name: "Model Development", icon: "build",
-        description: "We build, train, and fine-tune models for your specific domain — whether that's LLM integration, computer vision, or custom ML. Evaluated on real metrics, not toy benchmarks.",
-        deliverables: ["Trained model with evaluation", "Prompt engineering docs", "Model performance report", "Inference optimization"],
-      },
-      {
-        num: "04", name: "Integration", icon: "integrate",
-        description: "The model goes into your product — not a separate tool. We embed AI where it creates real workflow value, with graceful fallbacks for when it's uncertain.",
-        deliverables: ["Production AI integration", "Fallback logic design", "API endpoints for AI features", "End-user testing report"],
-      },
-      {
-        num: "05", name: "Monitoring", icon: "monitor",
-        description: "AI in production drifts. We set up monitoring for model performance, data distribution shifts, and user feedback loops so quality holds over time.",
-        deliverables: ["Model monitoring dashboard", "Drift detection setup", "Feedback loop implementation", "Retraining runbook"],
-      },
-    ],
+    desc: "We build, train, and embed models that solve genuine problems. Every use case is evaluated for real ROI before a single line of model code is written.",
+    accentFrom: "#6D28D9", accentTo: "#06B6D4",
   },
   {
     id: "cloud-devops",
     title: "Cloud & DevOps",
     fullTitle: "Cloud & DevOps",
     tagline: "Deployments should be boring. Incidents should be rare.",
-    accentFrom: "#0891B2",
-    accentTo: "#06B6D4",
-    phases: [
-      {
-        num: "01", name: "Audit", icon: "audit",
-        description: "We analyse your current infrastructure — costs, reliability gaps, security posture, and deployment pain points. Honest findings, no upselling.",
-        deliverables: ["Infrastructure audit report", "Cost optimization analysis", "Security posture review", "Reliability risk register"],
-      },
-      {
-        num: "02", name: "Architecture", icon: "plan",
-        description: "Cloud infrastructure designed for your actual scale, not imagined scale. Right-sized resources, multi-region if needed, disaster recovery baked in from day one.",
-        deliverables: ["Cloud architecture diagram", "Infrastructure-as-code templates", "Scaling strategy", "DR & backup plan"],
-      },
-      {
-        num: "03", name: "Migration", icon: "build",
-        description: "Zero-downtime migration with tested rollback plans. We move workloads in stages — nothing big-bangs into production.",
-        deliverables: ["Migration runbook", "Staged cutover plan", "Rollback procedures", "Data migration validation"],
-      },
-      {
-        num: "04", name: "Automation", icon: "integrate",
-        description: "CI/CD pipelines, automated testing gates, infrastructure-as-code, alerting, and log aggregation. Deployments become a button press.",
-        deliverables: ["CI/CD pipeline setup", "Automated deployment gates", "Observability stack", "Alert runbooks"],
-      },
-      {
-        num: "05", name: "Optimisation", icon: "monitor",
-        description: "Ongoing cost reviews, performance tuning, and capacity planning. We keep the lights on and the bills sensible.",
-        deliverables: ["Monthly cost reports", "Performance benchmarks", "Capacity planning model", "Ongoing SRE support"],
-      },
-    ],
+    desc: "Right-sized cloud infrastructure, CI/CD pipelines, and automated observability. We audit, migrate, and optimise — with rollback procedures at every step.",
+    accentFrom: "#0891B2", accentTo: "#06B6D4",
   },
   {
     id: "mobile",
     title: "Mobile Engineering",
     fullTitle: "Mobile Engineering",
     tagline: "Fast on a 3-year-old phone. Native where it matters.",
-    accentFrom: "#7C3AED",
-    accentTo: "#06B6D4",
-    phases: [
-      {
-        num: "01", name: "Discovery", icon: "discover",
-        description: "Platform strategy first — native iOS/Android or cross-platform? We weigh your user base, feature requirements, and long-term maintenance before writing a line.",
-        deliverables: ["Platform recommendation report", "User research summary", "Feature priority matrix", "Technical constraints doc"],
-      },
-      {
-        num: "02", name: "UX Design", icon: "plan",
-        description: "Native design patterns for each platform — not a web app in a shell. iOS feels like iOS, Android feels like Android. Prototypes validated with real users.",
-        deliverables: ["Native UI/UX prototypes", "Design system for mobile", "User testing report", "Accessibility audit"],
-      },
-      {
-        num: "03", name: "Development", icon: "build",
-        description: "React Native or Flutter for cross-platform. Swift/Kotlin for pure native. Performance profiled from the start — smooth 60fps on mid-range hardware.",
-        deliverables: ["Working app builds (iOS + Android)", "Weekly sprint demos", "Performance profiling report", "Code repository"],
-      },
-      {
-        num: "04", name: "Device Testing", icon: "test",
-        description: "Tested across real devices — not just emulators. Edge cases in connectivity, background states, and OS versions. Push notification, deep link, and permission flows.",
-        deliverables: ["Device test matrix results", "Crash-free rate report", "Connectivity edge case tests", "OS compatibility report"],
-      },
-      {
-        num: "05", name: "Store Launch", icon: "launch",
-        description: "App store submission handled end to end — screenshots, metadata, review responses. TestFlight / internal testing tracks. Monitoring from day one.",
-        deliverables: ["App Store & Play Store submissions", "Store listing assets", "Crash monitoring setup", "Launch day support"],
-      },
-    ],
+    desc: "iOS and Android apps built for real device performance. React Native, Flutter, or pure native — chosen for your users, not our convenience.",
+    accentFrom: "#7C3AED", accentTo: "#06B6D4",
   },
   {
     id: "ui-ux",
     title: "UI/UX Design",
     fullTitle: "UI/UX Design",
     tagline: "Makes sense first. Then it looks good.",
-    accentFrom: "#A855F7",
-    accentTo: "#EC4899",
-    phases: [
-      {
-        num: "01", name: "Research", icon: "discover",
-        description: "User interviews, competitor analysis, heuristic evaluation. We understand who uses this, how they think, and where current designs fail them.",
-        deliverables: ["User research report", "Persona definitions", "Competitor UX audit", "Problem statement framework"],
-      },
-      {
-        num: "02", name: "Information Architecture", icon: "plan",
-        description: "Before any visual design, we map out the structure — navigation, user flows, content hierarchy. Everything clickable has a reason.",
-        deliverables: ["Site map / app map", "User flow diagrams", "Content hierarchy doc", "Navigation framework"],
-      },
-      {
-        num: "03", name: "Design", icon: "build",
-        description: "High-fidelity designs in Figma — with real content, not lorem ipsum. Component-based design system that developers can actually build from.",
-        deliverables: ["Figma design files", "Component design system", "Responsive breakpoints", "Interaction specifications"],
-      },
-      {
-        num: "04", name: "Prototyping & Testing", icon: "test",
-        description: "Clickable prototypes tested with real users. We iterate based on what people actually do, not what they say they'll do.",
-        deliverables: ["Interactive prototype", "Usability test recordings", "Iteration report", "Accessibility compliance check"],
-      },
-      {
-        num: "05", name: "Handover", icon: "launch",
-        description: "Developer-ready handover — annotated specs, assets exported, design tokens documented. We stay available during implementation to answer questions.",
-        deliverables: ["Annotated design specs", "Asset export package", "Design token documentation", "Developer Q&A support"],
-      },
-    ],
+    desc: "Research-driven design validated with real users. High-fidelity Figma handover with design tokens your developers can build from without guessing.",
+    accentFrom: "#A855F7", accentTo: "#EC4899",
   },
   {
     id: "web-platforms",
     title: "Web Platforms",
     fullTitle: "Web Platforms & Applications",
     tagline: "Loads fast, handles traffic, built for the long run.",
-    accentFrom: "#0891B2",
-    accentTo: "#7C3AED",
-    phases: [
-      {
-        num: "01", name: "Discovery", icon: "discover",
-        description: "Define the product scope, target audience, performance requirements, and scalability needs. We challenge assumptions before they become expensive technical debt.",
-        deliverables: ["Product scope document", "Technical requirements spec", "Performance targets", "SEO & accessibility baseline"],
-      },
-      {
-        num: "02", name: "Architecture", icon: "plan",
-        description: "Stack selection — Next.js, Remix, or custom — based on your actual needs. CDN strategy, database choice, caching layer, auth system all planned before building.",
-        deliverables: ["Tech stack decision doc", "System architecture", "API design spec", "Security architecture"],
-      },
-      {
-        num: "03", name: "Development", icon: "build",
-        description: "Component-driven development. Lighthouse scores tracked from day one. Accessibility built in, not added later. Incremental delivery, weekly demos.",
-        deliverables: ["Working web application", "Lighthouse performance reports", "Component library", "Weekly sprint demos"],
-      },
-      {
-        num: "04", name: "Testing", icon: "test",
-        description: "Cross-browser, cross-device testing. Load testing to your traffic projections. Security audit. Core Web Vitals validated in real conditions.",
-        deliverables: ["Cross-browser test report", "Load test results", "Security penetration report", "Core Web Vitals report"],
-      },
-      {
-        num: "05", name: "Launch", icon: "launch",
-        description: "Production deployment with rollback capability. SEO metadata, sitemaps, and monitoring in place before the domain goes live.",
-        deliverables: ["Production deployment", "Analytics & monitoring setup", "SEO configuration", "Post-launch support"],
-      },
-    ],
+    desc: "Next.js, Remix, or custom stacks chosen for your actual scale. Core Web Vitals tracked from day one, SEO and accessibility built in — not bolted on.",
+    accentFrom: "#0891B2", accentTo: "#7C3AED",
   },
   {
     id: "digital-transformation",
     title: "Digital Transformation",
     fullTitle: "Digital Transformation",
     tagline: "Off legacy stacks. Into systems that move fast.",
-    accentFrom: "#059669",
-    accentTo: "#06B6D4",
-    phases: [
-      {
-        num: "01", name: "Assessment", icon: "audit",
-        description: "We map your current systems, processes, and pain points. Where is technology slowing people down? Where are manual processes hiding? What's the actual cost of the status quo?",
-        deliverables: ["Current state assessment", "Process pain point map", "Technology debt register", "Transformation business case"],
-      },
-      {
-        num: "02", name: "Strategy", icon: "plan",
-        description: "A phased roadmap — not a big-bang replacement. We sequence the changes to deliver value early and reduce risk. People, process, and technology all addressed together.",
-        deliverables: ["Transformation roadmap", "Change management plan", "Risk mitigation strategy", "Success metrics framework"],
-      },
-      {
-        num: "03", name: "Modernisation", icon: "build",
-        description: "Incrementally replace or integrate legacy systems. Strangler fig pattern where appropriate. New capabilities built alongside existing ones, not as replacements.",
-        deliverables: ["Modernised system modules", "Integration layer", "Data migration plan", "Legacy decommission roadmap"],
-      },
-      {
-        num: "04", name: "Adoption", icon: "test",
-        description: "Training, documentation, and change management. Technology only transforms if people use it. We measure adoption, not just deployment.",
-        deliverables: ["Training materials", "User adoption metrics", "Process documentation", "Feedback collection system"],
-      },
-      {
-        num: "05", name: "Continuous Improvement", icon: "monitor",
-        description: "Transformation is never done. We set up the systems to keep improving — feedback loops, performance metrics, and regular reviews of what to tackle next.",
-        deliverables: ["KPI dashboard", "Continuous improvement process", "Quarterly review framework", "Long-term roadmap updates"],
-      },
-    ],
+    desc: "Phased migration roadmaps that deliver value early. We sequence changes so existing operations keep running while modern capabilities come online.",
+    accentFrom: "#059669", accentTo: "#06B6D4",
   },
   {
     id: "fintech",
     title: "Fintech & Payments",
     fullTitle: "Fintech & Payments",
     tagline: "Where bugs aren't bugs — they're liabilities.",
-    accentFrom: "#0891B2",
-    accentTo: "#059669",
-    phases: [
-      {
-        num: "01", name: "Compliance First", icon: "audit",
-        description: "We map the regulatory landscape for your product and jurisdiction before design begins. PCI DSS, PSD2, FCA, or sector-specific compliance requirements — understood and scoped.",
-        deliverables: ["Regulatory requirement mapping", "Compliance gap analysis", "Licensing requirements doc", "Risk framework"],
-      },
-      {
-        num: "02", name: "Architecture", icon: "plan",
-        description: "Financial systems need idempotent operations, audit trails, and double-entry accounting patterns. We design for correctness first, then performance.",
-        deliverables: ["Financial system architecture", "Audit trail design", "Idempotency implementation plan", "Data retention policy"],
-      },
-      {
-        num: "03", name: "Development", icon: "build",
-        description: "Payment flows built with edge cases as the primary cases — failed payments, partial refunds, dispute handling, and currency conversion all designed explicitly.",
-        deliverables: ["Payment flow implementation", "Webhook handling system", "Reconciliation logic", "Error recovery procedures"],
-      },
-      {
-        num: "04", name: "Security Audit", icon: "test",
-        description: "Penetration testing, vulnerability scanning, and PCI DSS assessment. Financial data requires a higher security bar — we apply one.",
-        deliverables: ["Penetration test report", "PCI compliance assessment", "Vulnerability remediation", "Security hardening checklist"],
-      },
-      {
-        num: "05", name: "Launch & Monitor", icon: "monitor",
-        description: "Staged rollout with transaction monitoring from day one. Fraud detection patterns set up. Reconciliation reports automated.",
-        deliverables: ["Staged launch plan", "Transaction monitoring setup", "Fraud detection rules", "Automated reconciliation"],
-      },
-    ],
+    desc: "Payment flows, compliance mapping, and financial system architecture built for correctness first. Edge cases — failed payments, disputes, refunds — designed explicitly.",
+    accentFrom: "#0891B2", accentTo: "#059669",
   },
   {
     id: "api",
     title: "API & Integrations",
     fullTitle: "API Development & Integrations",
     tagline: "Connect things that weren't meant to talk. Clean contracts.",
-    accentFrom: "#7C3AED",
-    accentTo: "#0891B2",
-    phases: [
-      {
-        num: "01", name: "Discovery", icon: "discover",
-        description: "Map every system that needs to communicate, the data that flows between them, and the edge cases when things fail. Integration complexity hides in edge cases.",
-        deliverables: ["Integration map", "Data flow diagram", "Failure scenario catalogue", "Third-party API assessment"],
-      },
-      {
-        num: "02", name: "API Design", icon: "plan",
-        description: "RESTful, GraphQL, or event-driven — chosen for the use case, not preference. Versioning strategy, authentication model, and error formats agreed before building.",
-        deliverables: ["OpenAPI / GraphQL schema", "Versioning strategy", "Auth & rate limit design", "Error response standards"],
-      },
-      {
-        num: "03", name: "Development", icon: "build",
-        description: "Clean, consistent implementation with comprehensive test coverage. Mock servers for consumer teams to develop against in parallel.",
-        deliverables: ["API implementation", "Mock server for consumers", "SDK documentation", "Integration test suite"],
-      },
-      {
-        num: "04", name: "Testing", icon: "test",
-        description: "Contract testing, load testing, and failure injection. We test what happens when the third-party API you depend on goes down.",
-        deliverables: ["Contract test results", "Load test benchmarks", "Chaos / failure injection tests", "Retry & timeout validation"],
-      },
-      {
-        num: "05", name: "Documentation & Launch", icon: "launch",
-        description: "Developer documentation that people actually read — code examples, interactive playground, changelog. Monitored in production from day one.",
-        deliverables: ["Developer documentation site", "Interactive API playground", "Changelog system", "API health monitoring"],
-      },
-    ],
+    desc: "RESTful, GraphQL, or event-driven APIs with versioning, auth model, and contract testing. We design for the failure cases, not just the happy path.",
+    accentFrom: "#7C3AED", accentTo: "#0891B2",
   },
   {
     id: "security",
     title: "Cybersecurity",
     fullTitle: "Cybersecurity & Compliance",
     tagline: "Find problems before someone else does it for you.",
-    accentFrom: "#DC2626",
-    accentTo: "#7C3AED",
-    phases: [
-      {
-        num: "01", name: "Assessment", icon: "audit",
-        description: "Threat modelling and attack surface mapping. We look at your system the way an attacker would — identifying entry points, privilege escalation paths, and data exposure risks.",
-        deliverables: ["Threat model document", "Attack surface map", "Risk severity register", "Compliance gap analysis"],
-      },
-      {
-        num: "02", name: "Architecture Review", icon: "plan",
-        description: "Security architecture review — authentication flows, authorization models, secrets management, encryption at rest and in transit. Designed to be right, not just compliant.",
-        deliverables: ["Security architecture review", "Auth model assessment", "Secrets management plan", "Encryption policy"],
-      },
-      {
-        num: "03", name: "Penetration Testing", icon: "build",
-        description: "Manual penetration testing by experienced testers — not just automated scans. OWASP Top 10, business logic flaws, and infrastructure attacks.",
-        deliverables: ["Penetration test report", "OWASP coverage report", "Business logic flaw findings", "Remediation priority list"],
-      },
-      {
-        num: "04", name: "Remediation", icon: "test",
-        description: "We don't just report — we fix. Working with your team to implement patches, close vulnerabilities, and verify the fixes actually work.",
-        deliverables: ["Remediation implementation", "Patch verification tests", "Updated security baseline", "Developer security training"],
-      },
-      {
-        num: "05", name: "Ongoing Monitoring", icon: "monitor",
-        description: "Security is not a one-time event. We set up SIEM, intrusion detection, and vulnerability scanning so you know when the threat landscape changes.",
-        deliverables: ["SIEM setup", "Intrusion detection alerts", "Regular vulnerability scans", "Incident response playbook"],
-      },
-    ],
+    desc: "Manual penetration testing, architecture review, and ongoing SIEM monitoring. We look at your system the way an attacker would — then fix what we find.",
+    accentFrom: "#DC2626", accentTo: "#7C3AED",
   },
   {
     id: "qa",
     title: "QA & Testing",
     fullTitle: "QA & Testing",
     tagline: "Tests that mean something. Not just tests that run green.",
-    accentFrom: "#059669",
-    accentTo: "#0891B2",
-    phases: [
-      {
-        num: "01", name: "Test Strategy", icon: "plan",
-        description: "Define what to test, at what level, with what tools. Unit, integration, E2E, performance, accessibility — each has a role. We build a strategy, not a test backlog.",
-        deliverables: ["Test strategy document", "Test pyramid design", "Tool selection & setup", "Coverage targets"],
-      },
-      {
-        num: "02", name: "Test Design", icon: "discover",
-        description: "Equivalence partitioning, boundary value analysis, and risk-based testing. We identify the scenarios that matter before writing a single test.",
-        deliverables: ["Test case specifications", "Risk-based test coverage map", "Edge case catalogue", "Test data strategy"],
-      },
-      {
-        num: "03", name: "Automation", icon: "build",
-        description: "Automated test suites that run in CI on every commit. Playwright for E2E, Jest/Vitest for unit, k6 for performance. Maintained as a first-class codebase.",
-        deliverables: ["Automated test suite", "CI pipeline integration", "Test reporting dashboard", "Coverage thresholds enforced"],
-      },
-      {
-        num: "04", name: "Execution", icon: "test",
-        description: "Exploratory testing alongside automation. We look for what the scripts don't catch — UX inconsistencies, performance degradation under real load, and accessibility failures.",
-        deliverables: ["Exploratory test sessions", "Load test results", "Accessibility audit", "Defect severity triage"],
-      },
-      {
-        num: "05", name: "Continuous QA", icon: "monitor",
-        description: "Quality is maintained, not achieved once. Flaky test elimination, coverage ratcheting, and test health metrics so your suite stays trustworthy as the codebase grows.",
-        deliverables: ["Test health metrics", "Flaky test elimination report", "Coverage trend tracking", "Regression prevention setup"],
-      },
-    ],
+    desc: "Automated suites on every commit plus exploratory testing that catches what scripts miss. Coverage ratcheting keeps the suite trustworthy as you grow.",
+    accentFrom: "#059669", accentTo: "#0891B2",
   },
   {
     id: "consulting",
     title: "IT Consulting",
     fullTitle: "IT Consulting",
     tagline: "Sometimes the best advice is what not to build.",
-    accentFrom: "#7C3AED",
-    accentTo: "#A855F7",
-    phases: [
-      {
-        num: "01", name: "Understand", icon: "discover",
-        description: "We listen before we advise. Understanding your business context, constraints, team capabilities, and the actual problem — not the stated problem — before forming any view.",
-        deliverables: ["Stakeholder interview sessions", "Current state documentation", "Problem framing workshop", "Context briefing document"],
-      },
-      {
-        num: "02", name: "Diagnose", icon: "audit",
-        description: "Technical debt mapping, architecture review, process analysis. Where are the real bottlenecks? What decisions are slowing you down? What's costing more than it should?",
-        deliverables: ["Technical debt register", "Architecture assessment", "Process bottleneck analysis", "Cost optimisation opportunities"],
-      },
-      {
-        num: "03", name: "Recommend", icon: "plan",
-        description: "Specific, actionable recommendations — not generic best practices. Each recommendation includes the trade-offs, the implementation path, and the expected outcome.",
-        deliverables: ["Prioritised recommendations report", "Trade-off analysis", "Implementation roadmap", "Decision-ready presentation"],
-      },
-      {
-        num: "04", name: "Implementation Support", icon: "build",
-        description: "Recommendations only have value if they're executed. We stay involved — reviewing progress, answering technical questions, and adjusting the plan as reality intervenes.",
-        deliverables: ["Implementation review sessions", "Technical Q&A support", "Progress tracking", "Plan adjustment recommendations"],
-      },
-      {
-        num: "05", name: "Knowledge Transfer", icon: "launch",
-        description: "We leave you more capable than we found you. Documentation, training, and working sessions that build internal capability so you're not dependent on us forever.",
-        deliverables: ["Internal capability assessment", "Training sessions", "Documentation handover", "Ongoing retainer option"],
-      },
-    ],
+    desc: "Specific, actionable recommendations backed by deep diagnosis of your actual bottlenecks — not generic best practices. We stay involved through implementation.",
+    accentFrom: "#7C3AED", accentTo: "#A855F7",
   },
 ] as const;
 
 type ServiceType = typeof SERVICES[number];
-type PhaseType = ServiceType["phases"][number];
 
-// ─── Phase icon renderer ──────────────────────────────────────────────────────
-function PhaseIcon({ name }: { name: string }) {
-  return (PhaseIcons as Record<string, JSX.Element>)[name] ?? PhaseIcons.discover;
-}
+// +1 for intro screen, +1 for end buffer
+const TOTAL_SLOTS = SERVICES.length + 2;
 
-// ─── Individual phase step display ────────────────────────────────────────────
-function PhasePanel({
-  phase,
+// ─── Service card ─────────────────────────────────────────────────────────────
+function ServiceCard({
   service,
-  direction,
+  index,
+  noMotion,
 }: {
-  phase: PhaseType;
   service: ServiceType;
-  direction: number;
+  index: number;
+  noMotion: boolean;
 }) {
+  const cardRef = useRef<HTMLDivElement>(null);
   const BgRenderer = ServiceBgs[service.id];
+
+  // Mouse-tracking motion values — always initialised (rules of hooks)
+  const rawX = useMotionValue(0);
+  const rawY = useMotionValue(0);
+  const rotateY = useSpring(useTransform(rawX, [-0.5, 0.5], [-5, 5]),  { stiffness: 180, damping: 28 });
+  const rotateX = useSpring(useTransform(rawY, [-0.5, 0.5], [4, -4]),  { stiffness: 180, damping: 28 });
+  // Illustration drifts opposite — adds depth
+  const illX = useTransform(rawX, [-0.5, 0.5], [14, -14]);
+  const illY = useTransform(rawY, [-0.5, 0.5], [8, -8]);
+
+  const onMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    if (noMotion || !cardRef.current) return;
+    const r = cardRef.current.getBoundingClientRect();
+    rawX.set((e.clientX - r.left) / r.width  - 0.5);
+    rawY.set((e.clientY - r.top)  / r.height - 0.5);
+  }, [noMotion, rawX, rawY]);
+
+  const onMouseLeave = useCallback(() => { rawX.set(0); rawY.set(0); }, [rawX, rawY]);
 
   return (
     <motion.div
-      key={phase.num + service.id}
-      initial={{ opacity: 0, x: direction * 36, y: 6 }}
-      animate={{ opacity: 1, x: 0, y: 0 }}
-      exit={{    opacity: 0, x: direction * -28, y: -6 }}
-      transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-      className="absolute inset-0 flex flex-col justify-between p-4 sm:p-7 md:p-10"
+      ref={cardRef}
+      onMouseMove={onMouseMove}
+      onMouseLeave={onMouseLeave}
+      initial={{ opacity: 0, x: 110, scale: 0.93 }}
+      animate={{ opacity: 1, x: 0, scale: 1 }}
+      exit={{
+        opacity: 0, x: -80, scale: 0.97,
+        transition: { duration: 0.20, ease: [0.36, 0, 0.66, 0] },
+      }}
+      transition={noMotion
+        ? { duration: 0.25 }
+        : { type: "spring", stiffness: 260, damping: 28 }
+      }
+      style={{
+        rotateX: noMotion ? 0 : rotateX,
+        rotateY: noMotion ? 0 : rotateY,
+        transformPerspective: 1100,
+        transformStyle: "preserve-3d",
+        position: "absolute",
+        inset: 0,
+        borderRadius: "26px",
+        // Flat ultra-dark card — no gradient, avoids the generic "dark tech" gradient look
+        background: "#0A0E1C",
+        border: "1px solid rgba(255,255,255,0.06)",
+        // Top accent hairline — the one deliberate gradient element
+        boxShadow: `
+          0 0 0 0.5px rgba(255,255,255,0.04) inset,
+          0 48px 96px -24px rgba(0,0,0,0.90),
+          0 0 80px ${service.accentFrom}12
+        `,
+        overflow: "hidden",
+      }}
     >
-      {/* ── Service thematic background illustration ── */}
-      <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-2xl" style={{ color: service.accentFrom }} aria-hidden>
-        {BgRenderer?.(service.accentFrom)}
-      </div>
-
-      {/* ── Watermark phase number (right, very faint) ── */}
+      {/* Top hairline gradient — editorial accent, not decoration */}
       <div
-        className="pointer-events-none absolute right-5 top-3 select-none font-display font-black leading-none"
-        style={{
-          fontSize: "clamp(6rem, 16vw, 10rem)",
-          background: `linear-gradient(135deg, ${service.accentFrom}14, ${service.accentTo}08)`,
-          WebkitBackgroundClip: "text",
-          WebkitTextFillColor: "transparent",
-          backgroundClip: "text",
-        }}
-        aria-hidden
-      >
-        {phase.num}
+        className="pointer-events-none absolute inset-x-0 top-0 h-px"
+        style={{ background: `linear-gradient(90deg, transparent 5%, ${service.accentFrom}70 40%, ${service.accentTo}70 60%, transparent 95%)` }}
+      />
+
+      {/* ── Illustration zone — left ≥ md, top < md ─────────────────────── */}
+      <div className="svc-illus-zone absolute left-0 top-0 w-full md:inset-y-0 md:w-[52%]">
+        {/* Asymmetric glow — from top-left, not centered (breaks the AI-template look) */}
+        <motion.div
+          key={`glow-${index}`}
+          className="pointer-events-none absolute inset-0"
+          animate={noMotion ? {} : { opacity: [0.75, 1.15, 0.75] }}
+          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+          style={{
+            background: `radial-gradient(ellipse 80% 75% at 30% 35%, ${service.accentFrom}26 0%, ${service.accentTo}0c 55%, transparent 78%)`,
+          }}
+        />
+
+        {/* Floating illustration */}
+        <motion.div
+          className="absolute inset-0"
+          style={{ color: service.accentFrom, x: noMotion ? 0 : illX, y: noMotion ? 0 : illY }}
+          animate={noMotion ? {} : { y: [0, -7, 0] }}
+          transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 0.3 }}
+        >
+          {BgRenderer?.(service.accentFrom)}
+        </motion.div>
+
+        {/* Fade edge: right (desktop) */}
+        <div
+          className="pointer-events-none absolute inset-y-0 right-0 hidden w-28 md:block"
+          style={{ background: "linear-gradient(to right, transparent, #0A0E1C)" }}
+        />
+        {/* Fade edge: bottom (mobile) */}
+        <div
+          className="pointer-events-none absolute inset-x-0 bottom-0 h-14 md:hidden"
+          style={{ background: "linear-gradient(to bottom, transparent, #0A0E1C)" }}
+        />
       </div>
 
-      {/* ── Top: phase identity row ── */}
-      <div className="relative z-10 flex items-center gap-4">
-        {/* Phase icon — large, glowing */}
-        <div
-          className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl"
-          style={{
-            background: `linear-gradient(135deg, ${service.accentFrom}22, ${service.accentTo}14)`,
-            border: `1.5px solid ${service.accentFrom}35`,
-            color: service.accentFrom,
-            boxShadow: `0 0 20px ${service.accentFrom}20, inset 0 1px 0 rgba(255,255,255,0.5)`,
-          }}
-        >
-          <PhaseIcon name={phase.icon} />
-        </div>
+      {/* ── Text zone — right ≥ md, bottom < md ──────────────────────────── */}
+      <div className="svc-text-zone absolute inset-x-0 bottom-0 flex flex-col justify-center md:inset-y-0 md:right-0 md:left-[52%]">
+        <div className="flex h-full flex-col justify-center px-5 py-3 md:px-9 md:py-10">
 
-        <div className="flex flex-col gap-0.5">
-          <span
-            className="font-sans text-[10px] font-bold uppercase tracking-[0.18em]"
-            style={{ color: service.accentFrom }}
+          {/* Service icon */}
+          <div
+            className="mb-3 md:mb-4 flex h-10 w-10 md:h-12 md:w-12 shrink-0 items-center justify-center rounded-2xl"
+            style={{
+              background: `${service.accentFrom}20`,
+              border: `1.5px solid ${service.accentFrom}35`,
+              color: service.accentFrom,
+              boxShadow: `0 0 28px ${service.accentFrom}30`,
+            }}
           >
-            Step {phase.num}
-          </span>
-          <span className="font-display font-bold text-slate-900" style={{ fontSize: "1.05rem" }}>
-            {phase.name}
-          </span>
-        </div>
-
-        {/* Service icon badge — small, top right area */}
-        <div
-          className="ml-auto flex h-8 w-8 shrink-0 items-center justify-center rounded-xl"
-          style={{
-            background: `${service.accentFrom}10`,
-            color: service.accentFrom,
-            border: `1px solid ${service.accentFrom}20`,
-          }}
-          title={service.fullTitle}
-        >
-          <div style={{ transform: "scale(0.85)" }}>
             {ServiceIcons[service.id]}
           </div>
-        </div>
-      </div>
 
-      {/* ── Middle: description ── */}
-      <div className="relative z-10 flex-1 flex flex-col justify-center gap-3 mt-4">
-        <p className="text-sm leading-relaxed md:text-[0.95rem]" style={{ color: "#475569", maxWidth: "500px" }}>
-          {phase.description}
-        </p>
-      </div>
+          {/* Counter */}
+          <span
+            className="mb-1.5 font-mono text-[11px] tracking-[0.22em]"
+            style={{ color: `${service.accentFrom}75` }}
+          >
+            {String(index + 1).padStart(2, "0")} / {SERVICES.length}
+          </span>
 
-      {/* ── Bottom: deliverables ── */}
-      <div className="relative z-10 mt-4">
-        <div
-          className="rounded-xl p-4"
-          style={{
-            background: `linear-gradient(135deg, ${service.accentFrom}07, ${service.accentTo}04)`,
-            border: `1px solid ${service.accentFrom}14`,
-          }}
-        >
-          <p className="mb-2.5 font-sans text-[10px] font-bold uppercase tracking-[0.16em]" style={{ color: service.accentFrom }}>
-            What you get
+          {/* Service name — large, no animation stagger (feels more editorial, less template) */}
+          <h2
+            className="font-display font-bold text-white"
+            style={{
+              fontSize: "clamp(1.35rem, 2.3vw, 2rem)",
+              lineHeight: 1.1,
+              letterSpacing: "-0.025em",
+            }}
+          >
+            {service.fullTitle}
+          </h2>
+
+          {/* Accent rule — the ONE animated element in text zone */}
+          <motion.div
+            initial={{ width: 0, opacity: 0 }}
+            animate={{ width: "42px", opacity: 1 }}
+            transition={{ delay: 0.18, duration: 0.45 }}
+            className="my-3 h-[2px] shrink-0 rounded-full"
+            style={{ background: `linear-gradient(to right, ${service.accentFrom}, ${service.accentTo})` }}
+          />
+
+          {/* Tagline — accent, bold, distinct from description */}
+          <p
+            className="mb-2.5 font-sans text-[13px] font-semibold leading-snug"
+            style={{ color: service.accentFrom }}
+          >
+            {service.tagline}
           </p>
-          <div className="grid grid-cols-1 gap-1.5 sm:grid-cols-2">
-            {phase.deliverables.map((d) => (
-              <div key={d} className="flex items-start gap-2">
-                <span
-                  className="mt-[5px] h-1.5 w-1.5 shrink-0 rounded-full"
-                  style={{ background: `linear-gradient(135deg, ${service.accentFrom}, ${service.accentTo})` }}
-                  aria-hidden
-                />
-                <span className="text-[13px] leading-snug" style={{ color: "#334155" }}>{d}</span>
-              </div>
-            ))}
-          </div>
+
+          {/* Description — clamped to 3 lines on mobile so CTA stays visible */}
+          <p
+            className="svc-desc mb-3 md:mb-5 font-sans text-[12px] md:text-[12.5px] leading-relaxed"
+            style={{ color: "#94A3B8", maxWidth: "280px" }}
+          >
+            {service.desc}
+          </p>
+
+          {/* CTA — flat solid button, not gradient (less AI-generated) */}
+          {SERVICE_LINKS[service.id] && (
+            <Link
+              href={SERVICE_LINKS[service.id]}
+              className="inline-flex self-start items-center gap-2 rounded-xl px-4 py-2.5 font-sans text-[13px] font-semibold transition-all duration-200 hover:opacity-80 active:scale-[0.97]"
+              style={{
+                background: service.accentFrom,
+                color: "#fff",
+                boxShadow: `0 4px 18px ${service.accentFrom}38`,
+              }}
+            >
+              Explore service
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" className="h-3.5 w-3.5 shrink-0" aria-hidden>
+                <path d="M3 8h10M9 4l4 4-4 4" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </Link>
+          )}
         </div>
       </div>
     </motion.div>
   );
 }
 
-// ─── Main Services section ────────────────────────────────────────────────────
+// ─── Intro overlay (cinematic opening beat) ───────────────────────────────────
+function IntroOverlay({ visible, noMotion }: { visible: boolean; noMotion: boolean }) {
+  return (
+    <AnimatePresence>
+      {visible && (
+        <motion.div
+          className="pointer-events-none absolute inset-0 z-30 flex flex-col items-center justify-center"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0, transition: { duration: noMotion ? 0.1 : 0.55, ease: "easeIn" } }}
+          transition={{ duration: 0.4 }}
+        >
+          <motion.span
+            className="mb-3 font-mono text-[10px] font-bold uppercase tracking-[0.28em] text-slate-500"
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+          >
+            What we do
+          </motion.span>
+          <motion.h2
+            className="text-center font-display font-bold text-white"
+            style={{ fontSize: "clamp(2rem, 5vw, 3.4rem)", lineHeight: 1.08, letterSpacing: "-0.03em" }}
+            initial={{ opacity: 0, y: 14 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.18, type: "spring", stiffness: 240, damping: 26 }}
+          >
+            12 capabilities.<br />One engineering team.
+          </motion.h2>
+          <motion.p
+            className="mt-4 font-sans text-sm text-slate-500"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.35 }}
+          >
+            Scroll to explore each service
+          </motion.p>
+          <motion.div
+            className="mt-6"
+            animate={noMotion ? {} : { y: [0, 6, 0] }}
+            transition={{ duration: 1.4, repeat: Infinity, ease: "easeInOut" }}
+          >
+            <svg viewBox="0 0 16 24" className="h-5 w-3 text-slate-600" fill="none" stroke="currentColor" strokeWidth="1.4">
+              <rect x="1" y="1" width="14" height="22" rx="7"/>
+              <line x1="8" y1="5" x2="8" y2="10" strokeLinecap="round"/>
+            </svg>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}
+
+// ─── Main component ────────────────────────────────────────────────────────────
 export default function Services() {
-  const [activeIdx, setActiveIdx]   = useState(0);
-  const [phaseIdx,  setPhaseIdx]    = useState(0);
-  const [direction, setDirection]   = useState(1);
-  const [paused,    setPaused]      = useState(false);
-  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const resumeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const sectionRef    = useRef<HTMLElement>(null);
+  const [activeIdx,  setActiveIdx]  = useState(0);
+  const [showIntro,  setShowIntro]  = useState(true);
+  const [showHint,   setShowHint]   = useState(true);
+  const noMotion = useReducedMotion() ?? false;
+
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start start", "end end"],
+  });
+
+  useMotionValueEvent(scrollYProgress, "change", (latest) => {
+    // First slot (0 → 1/TOTAL_SLOTS) = intro screen
+    const introCutoff = 0.75 / TOTAL_SLOTS;
+    if (latest < introCutoff) { setShowIntro(true); return; }
+    setShowIntro(false);
+    // Remaining slots map to services
+    const serviceProgress = (latest - introCutoff) / (1 - introCutoff);
+    const newIdx = Math.min(
+      Math.floor(serviceProgress * (SERVICES.length + 0.5)),
+      SERVICES.length - 1,
+    );
+    if (newIdx !== activeIdx) setActiveIdx(newIdx);
+  });
+
+  // Hide scroll hint after 4s or on first service change
+  useEffect(() => {
+    if (activeIdx > 0) { setShowHint(false); return; }
+    const t = setTimeout(() => setShowHint(false), 4000);
+    return () => clearTimeout(t);
+  }, [activeIdx]);
+
+  // Jump to a service via smooth scroll
+  const goToService = useCallback((idx: number) => {
+    if (!sectionRef.current) return;
+    const top    = sectionRef.current.getBoundingClientRect().top + window.scrollY;
+    const height = sectionRef.current.offsetHeight;
+    // Aim for 80% into the target service slot
+    const introCutoff = 0.75 / TOTAL_SLOTS;
+    const slotSize    = (1 - introCutoff) / (SERVICES.length + 0.5);
+    const progress    = introCutoff + (idx + 0.2) * slotSize;
+    window.scrollTo({ top: top + progress * height, behavior: "smooth" });
+  }, []);
+
+  // Keyboard navigation (arrow keys)
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (showIntro) return;
+      if (e.key === "ArrowRight" || e.key === "ArrowDown") {
+        e.preventDefault();
+        goToService(Math.min(activeIdx + 1, SERVICES.length - 1));
+      } else if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
+        e.preventDefault();
+        goToService(Math.max(activeIdx - 1, 0));
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [activeIdx, showIntro, goToService]);
 
   const service = SERVICES[activeIdx];
-  const phase   = service.phases[phaseIdx];
-
-  // Auto-advance phases every 3.8s
-  const resetTimer = useCallback(() => {
-    if (timerRef.current) clearInterval(timerRef.current);
-    if (paused) return;
-    timerRef.current = setInterval(() => {
-      setDirection(1);
-      setPhaseIdx((p) => (p + 1) % service.phases.length);
-    }, 3800);
-  }, [paused, service.phases.length]);
-
-  useEffect(() => {
-    resetTimer();
-    return () => {
-      if (timerRef.current) clearInterval(timerRef.current);
-      if (resumeTimerRef.current) clearTimeout(resumeTimerRef.current);
-    };
-  }, [resetTimer, activeIdx, paused]);
-
-  const goPhase = (i: number) => {
-    setDirection(i > phaseIdx ? 1 : -1);
-    setPhaseIdx(i);
-    setPaused(true);
-    if (resumeTimerRef.current) clearTimeout(resumeTimerRef.current);
-    resumeTimerRef.current = setTimeout(() => setPaused(false), 6000);
-  };
-
-  const goService = (i: number) => {
-    setActiveIdx(i);
-    setPhaseIdx(0);
-    setDirection(1);
-    setPaused(false);
-  };
 
   return (
     <section
+      ref={sectionRef}
       id="services"
-      className="relative pt-14 pb-16 md:pt-20 md:pb-24 dtl-bg-light dtl-border-light overflow-hidden"
+      aria-label="Our services"
+      className="services-scroll-section"
     >
-      {/* Very faint decorative orb */}
+      {/* ── Sticky viewport ─────────────────────────────────────────────── */}
       <div
-        className="pointer-events-none absolute right-0 top-0 h-[500px] w-[500px] rounded-full opacity-[0.05]"
-        style={{ background: "radial-gradient(circle, rgba(124,58,237,0.8) 0%, transparent 70%)" }}
-        aria-hidden
-      />
+        className="services-sticky-inner sticky top-0 flex flex-col items-center justify-center overflow-hidden"
+        style={{ background: "#050714" }}
+      >
+        {/* Ambient section glow — asymmetric left-side origin, shifts per service */}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={`ambient-${activeIdx}`}
+            className="pointer-events-none absolute inset-0"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 1.0 }}
+            style={{
+              background: `radial-gradient(ellipse 55% 65% at 22% 45%, ${service.accentFrom}18 0%, ${service.accentTo}08 50%, transparent 72%)`,
+            }}
+          />
+        </AnimatePresence>
 
-      <div className="dtl-section">
-        {/* Section header */}
-        <div className="mb-8 md:mb-10 flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
-          <div>
-            <h2
-              className="font-display font-bold tracking-tight"
-              style={{ fontSize: "clamp(1.7rem, 3.5vw, 2.6rem)", lineHeight: 1.08, letterSpacing: "-0.025em", color: "#0F172A" }}
-            >
-              What we do —{" "}
-              <span className="dtl-gradient-text">and how we do it.</span>
-            </h2>
-          </div>
-          <p className="max-w-xs text-sm leading-relaxed md:text-right" style={{ color: "#64748B" }}>
-            Click any service to see the exact steps we take to deliver it.
-          </p>
-        </div>
+        {/* Intro overlay */}
+        <IntroOverlay visible={showIntro} noMotion={noMotion} />
 
-        {/* Main interactive layout */}
-        <div className="flex flex-col gap-5 lg:flex-row lg:gap-6">
+        {/* Card area */}
+        {!showIntro && (
+          <div className="relative z-10 w-full px-4">
+            {/* Card size wrapper */}
+            <div className="services-card-wrapper relative mx-auto">
 
-          {/* ── Service list — sidebar on desktop, horizontal scroll on mobile ── */}
-          <div className="w-full shrink-0 lg:w-72 xl:w-80">
-            {/* Mobile: horizontal scroll strip */}
-            <div className="scrollbar-none flex gap-2 overflow-x-auto pb-2 lg:hidden">
-              {SERVICES.map((s, i) => {
-                const isActive = i === activeIdx;
-                return (
-                  <button
-                    key={s.id}
-                    onClick={() => goService(i)}
-                    className="shrink-0 flex items-center gap-2 rounded-xl px-3 py-2 font-sans text-xs font-semibold transition-all duration-200"
-                    style={{
-                      background: isActive
-                        ? `linear-gradient(135deg, ${s.accentFrom}18, ${s.accentTo}10)`
-                        : "#F1F5F9",
-                      border: isActive ? `1px solid ${s.accentFrom}30` : "1px solid transparent",
-                      color: isActive ? s.accentFrom : "#64748B",
-                      whiteSpace: "nowrap",
-                    }}
-                  >
-                    <span style={{ display: "inline-flex", color: isActive ? s.accentFrom : "#94A3B8" }}>
-                      {ServiceIcons[s.id]}
-                    </span>
-                    {s.title}
-                  </button>
-                );
-              })}
-            </div>
+              {/* ← Prev arrow (desktop only) */}
+              <button
+                onClick={() => goToService(Math.max(activeIdx - 1, 0))}
+                disabled={activeIdx === 0}
+                aria-label="Previous service"
+                className="services-arrow services-arrow--left group absolute -left-12 top-1/2 -translate-y-1/2 hidden md:flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/5 text-slate-400 backdrop-blur transition-all duration-200 hover:border-white/20 hover:bg-white/10 hover:text-white disabled:pointer-events-none disabled:opacity-0"
+              >
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" className="h-3.5 w-3.5">
+                  <path d="M10 3L5 8l5 5" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </button>
 
-            {/* Desktop: vertical sidebar */}
-            <div
-              className="hidden lg:block rounded-2xl p-3"
-              style={{ background: "#FFFFFF", border: "1px solid #E2E8F0", boxShadow: "0 2px 16px -4px rgba(0,0,0,0.07)" }}
-            >
-              <div className="flex flex-col gap-0.5">
-                {SERVICES.map((s, i) => {
-                  const isActive = i === activeIdx;
-                  return (
-                    <button
-                      key={s.id}
-                      onClick={() => goService(i)}
-                      className="group relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-left transition-all duration-200"
-                      style={{
-                        background: isActive
-                          ? `linear-gradient(135deg, ${s.accentFrom}12, ${s.accentTo}08)`
-                          : "transparent",
-                        border: isActive ? `1px solid ${s.accentFrom}22` : "1px solid transparent",
-                      }}
-                      onMouseEnter={(e) => {
-                        if (!isActive) (e.currentTarget as HTMLElement).style.background = "#F8FAFC";
-                      }}
-                      onMouseLeave={(e) => {
-                        if (!isActive) (e.currentTarget as HTMLElement).style.background = "transparent";
-                      }}
-                    >
-                      {isActive && (
-                        <motion.div
-                          layoutId="activeBar"
-                          className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-6 rounded-full"
-                          style={{ background: `linear-gradient(to bottom, ${s.accentFrom}, ${s.accentTo})` }}
-                          transition={{ type: "spring", stiffness: 500, damping: 38 }}
-                        />
-                      )}
-                      <div
-                        className="shrink-0 flex h-8 w-8 items-center justify-center rounded-lg transition-all duration-200"
-                        style={{
-                          background: isActive
-                            ? `linear-gradient(135deg, ${s.accentFrom}22, ${s.accentTo}14)`
-                            : "rgba(241,245,249,0.8)",
-                          color: isActive ? s.accentFrom : "#94A3B8",
-                          border: isActive ? `1px solid ${s.accentFrom}25` : "1px solid transparent",
-                          boxShadow: isActive ? `0 0 12px ${s.accentFrom}18` : "none",
-                        }}
-                      >
-                        {ServiceIcons[s.id]}
-                      </div>
-                      <span
-                        className="font-sans text-[13px] font-medium leading-tight transition-colors duration-200 flex-1"
-                        style={{ color: isActive ? "#0F172A" : "#64748B" }}
-                      >
-                        {s.title}
-                      </span>
-                      <motion.svg
-                        animate={{ opacity: isActive ? 1 : 0, x: isActive ? 0 : -4 }}
-                        transition={{ duration: 0.2 }}
-                        className="shrink-0 h-3 w-3"
-                        viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2"
-                        style={{ color: s.accentFrom }}
-                      >
-                        <path d="M6 3l5 5-5 5" />
-                      </motion.svg>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
+              {/* → Next arrow (desktop only) */}
+              <button
+                onClick={() => goToService(Math.min(activeIdx + 1, SERVICES.length - 1))}
+                disabled={activeIdx === SERVICES.length - 1}
+                aria-label="Next service"
+                className="services-arrow services-arrow--right absolute -right-12 top-1/2 -translate-y-1/2 hidden md:flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/5 text-slate-400 backdrop-blur transition-all duration-200 hover:border-white/20 hover:bg-white/10 hover:text-white disabled:pointer-events-none disabled:opacity-0"
+              >
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" className="h-3.5 w-3.5">
+                  <path d="M6 3l5 5-5 5" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </button>
 
-          {/* ── Right: Journey panel ─────────────────────────────────────────── */}
-          <div className="flex-1 flex flex-col gap-4 min-w-0">
-
-            {/* Service header */}
-            <div
-              className="rounded-2xl px-4 sm:px-6 py-4 flex items-center justify-between gap-4"
-              style={{ background: "#FFFFFF", border: "1px solid #E2E8F0", boxShadow: "0 2px 16px -4px rgba(0,0,0,0.07)" }}
-            >
-              <div>
-                <h3
-                  className="font-display font-bold"
-                  style={{ fontSize: "1.1rem", color: "#0F172A" }}
-                >
-                  {service.fullTitle}
-                </h3>
-                <p className="mt-0.5 text-sm" style={{ color: "#64748B" }}>{service.tagline}</p>
-                {SERVICE_LINKS[service.id] && (
-                  <Link
-                    href={SERVICE_LINKS[service.id]}
-                    className="mt-2 inline-flex items-center gap-1 font-sans text-xs font-semibold transition-colors duration-200 hover:opacity-80"
-                    style={{ color: "#7C3AED" }}
-                  >
-                    Explore service
-                    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" className="h-3 w-3" aria-hidden>
-                      <path d="M3 8h10M9 4l4 4-4 4" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
-                  </Link>
-                )}
-              </div>
-              {/* Phase progress — named step pills */}
-              <div className="hidden sm:flex items-center gap-1 shrink-0 flex-wrap justify-end max-w-[220px] md:max-w-none">
-                {service.phases.map((p, i) => {
-                  const isP = i === phaseIdx;
-                  const isDone = i < phaseIdx;
-                  return (
-                    <button
-                      key={p.num}
-                      onClick={() => goPhase(i)}
-                      className="flex items-center gap-1.5 rounded-full px-2.5 py-1 font-sans text-[11px] font-semibold transition-all duration-200"
-                      style={{
-                        background: isP
-                          ? `linear-gradient(135deg, ${service.accentFrom}, ${service.accentTo})`
-                          : isDone ? `${service.accentFrom}15` : "#F1F5F9",
-                        color: isP ? "#fff" : isDone ? service.accentFrom : "#94A3B8",
-                        border: "none",
-                      }}
-                      aria-label={`Phase ${i + 1}: ${p.name}`}
-                    >
-                      {isDone && !isP && (
-                        <svg viewBox="0 0 10 10" className="h-2.5 w-2.5" fill="none" stroke="currentColor" strokeWidth="1.8">
-                          <polyline points="2 5 4 7 8 3" />
-                        </svg>
-                      )}
-                      {p.name}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Phase tabs — mobile */}
-            <div className="flex sm:hidden gap-1.5 overflow-x-auto pb-1">
-              {service.phases.map((p, i) => (
-                <button
-                  key={p.num}
-                  onClick={() => goPhase(i)}
-                  className="shrink-0 rounded-lg px-3 py-1.5 font-mono text-xs font-bold transition-all duration-200"
-                  style={{
-                    background: i === phaseIdx
-                      ? `linear-gradient(135deg, ${service.accentFrom}, ${service.accentTo})`
-                      : "#F1F5F9",
-                    color: i === phaseIdx ? "#FFFFFF" : "#64748B",
-                    border: "none",
-                  }}
-                >
-                  {p.num}
-                </button>
-              ))}
-            </div>
-
-            {/* Phase content panel */}
-            <div
-              className="relative flex-1 rounded-2xl overflow-hidden"
-              style={{
-                minHeight: "clamp(420px, 55vw, 460px)",
-                background: "#FFFFFF",
-                border: "1px solid #E2E8F0",
-                boxShadow: "0 4px 32px -8px rgba(0,0,0,0.08)",
-              }}
-            >
-              {/* Accent top bar */}
-              <div
-                className="absolute inset-x-0 top-0 h-0.5"
-                style={{ background: `linear-gradient(90deg, ${service.accentFrom}, ${service.accentTo})` }}
-              />
-
-
-              {/* Animated phase content */}
-              <AnimatePresence mode="wait" initial={false}>
-                <PhasePanel
-                  key={`${activeIdx}-${phaseIdx}`}
-                  phase={phase}
+              {/* Animated card */}
+              <AnimatePresence initial={false}>
+                <ServiceCard
+                  key={activeIdx}
                   service={service}
-                  direction={direction}
+                  index={activeIdx}
+                  noMotion={noMotion}
                 />
               </AnimatePresence>
-
-              {/* Phase nav arrows */}
-              <div className="absolute bottom-6 right-6 z-20 flex items-center gap-2">
-                <button
-                  onClick={() => goPhase(phaseIdx > 0 ? phaseIdx - 1 : service.phases.length - 1)}
-                  className="flex h-9 w-9 items-center justify-center rounded-full border transition-all duration-200 hover:border-slate-300 hover:bg-slate-50"
-                  style={{ borderColor: "#E2E8F0" }}
-                  aria-label="Previous phase"
-                >
-                  <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" className="h-3.5 w-3.5 text-slate-400">
-                    <path d="M10 3L5 8l5 5" />
-                  </svg>
-                </button>
-                <button
-                  onClick={() => goPhase((phaseIdx + 1) % service.phases.length)}
-                  className="flex h-9 w-9 items-center justify-center rounded-full border transition-all duration-200 hover:border-slate-300 hover:bg-slate-50"
-                  style={{ borderColor: "#E2E8F0" }}
-                  aria-label="Next phase"
-                >
-                  <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" className="h-3.5 w-3.5 text-slate-400">
-                    <path d="M6 3l5 5-5 5" />
-                  </svg>
-                </button>
-              </div>
-
-              {/* Auto-play indicator */}
-              {!paused && (
-                <div className="absolute bottom-6 left-6 z-20 flex items-center gap-2">
-                  <div
-                    className="h-1 rounded-full overflow-hidden"
-                    style={{ width: "60px", background: "#F1F5F9" }}
-                  >
-                    <motion.div
-                      key={`progress-${activeIdx}-${phaseIdx}`}
-                      className="h-full rounded-full"
-                      style={{ background: `linear-gradient(90deg, ${service.accentFrom}, ${service.accentTo})` }}
-                      initial={{ width: "0%" }}
-                      animate={{ width: "100%" }}
-                      transition={{ duration: 3.8, ease: "linear" }}
-                    />
-                  </div>
-                  <span className="font-sans text-[10px] text-slate-400">auto</span>
-                </div>
-              )}
             </div>
           </div>
+        )}
+
+        {/* ── Progress dots ───────────────────────────────────────────────── */}
+        <div className="absolute bottom-5 left-1/2 z-20 flex -translate-x-1/2 flex-col items-center gap-2.5">
+          {/* Current service name */}
+          {!showIntro && (
+            <AnimatePresence mode="wait">
+              <motion.span
+                key={`label-${activeIdx}`}
+                initial={{ opacity: 0, y: 3 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -3 }}
+                transition={{ duration: 0.22 }}
+                className="font-mono text-[10px] font-semibold uppercase tracking-[0.20em]"
+                style={{ color: `${service.accentFrom}90` }}
+              >
+                {service.title}
+              </motion.span>
+            </AnimatePresence>
+          )}
+
+          {/* Dot strip */}
+          <div className="flex items-center gap-1.5" role="tablist" aria-label="Service navigation">
+            {SERVICES.map((s, i) => (
+              <motion.button
+                key={s.id}
+                role="tab"
+                aria-selected={i === activeIdx && !showIntro}
+                aria-label={`Go to ${s.title}`}
+                onClick={() => { setShowIntro(false); goToService(i); }}
+                animate={{
+                  width:   i === activeIdx && !showIntro ? "20px" : "6px",
+                  opacity: i === activeIdx && !showIntro ? 1
+                         : Math.abs(i - activeIdx) === 1 ? 0.40
+                         : 0.18,
+                  background: i === activeIdx && !showIntro ? service.accentFrom : "#334155",
+                }}
+                transition={{ duration: 0.26 }}
+                className="h-1.5 rounded-full"
+              />
+            ))}
+          </div>
+
+          {/* Scroll hint */}
+          <AnimatePresence>
+            {showHint && !showIntro && (
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="mt-0.5 flex items-center gap-1.5 font-sans text-[10px] text-slate-600"
+              >
+                <svg viewBox="0 0 14 22" className="h-4 w-3 shrink-0" fill="none" stroke="currentColor" strokeWidth="1.3">
+                  <rect x="1" y="1" width="12" height="20" rx="6"/>
+                  <line x1="7" y1="5" x2="7" y2="9" strokeLinecap="round"/>
+                </svg>
+                Scroll or use arrow keys
+              </motion.p>
+            )}
+          </AnimatePresence>
         </div>
       </div>
     </section>

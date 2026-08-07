@@ -5,13 +5,10 @@ import Lenis from "lenis";
 
 export default function SmoothScroll({ children }: { children: ReactNode }) {
   useEffect(() => {
-    // lerp: 0.1 = 10% progress toward target per frame — crisp, immediate feel
-    // Duration/easing approach was too slow (0.9s to complete a scroll gesture)
-    // lerp is frame-rate based: faster device = same feel
     const lenis = new Lenis({
       lerp: 0.08,
       smoothWheel: true,
-      syncTouch: false, // native touch scroll — no artificial lag on mobile
+      syncTouch: false,
       overscroll: false,
     });
 
@@ -24,7 +21,7 @@ export default function SmoothScroll({ children }: { children: ReactNode }) {
 
     rafId = requestAnimationFrame(raf);
 
-    // Smooth hash navigation — let Lenis intercept anchor clicks
+    // Smooth hash navigation
     const onHashClick = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
       const anchor = target.closest('a[href^="#"]') as HTMLAnchorElement | null;
@@ -33,8 +30,19 @@ export default function SmoothScroll({ children }: { children: ReactNode }) {
       const el = id ? document.getElementById(id) : null;
       if (!el) return;
       e.preventDefault();
-      lenis.scrollTo(el, { offset: -80, duration: 1.2, easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)) });
+
+      // Use getBoundingClientRect + scrollY to get the element's absolute page
+      // position at the moment of click, then subtract nav height.
+      // Passing a number to lenis.scrollTo gives exact, unambiguous positioning.
+      const navHeight = document.getElementById("dtl-nav")?.offsetHeight ?? 88;
+      const absoluteY = window.scrollY + el.getBoundingClientRect().top - navHeight;
+
+      lenis.scrollTo(absoluteY, {
+        duration: 1.2,
+        easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      });
     };
+
     document.addEventListener("click", onHashClick);
 
     return () => {

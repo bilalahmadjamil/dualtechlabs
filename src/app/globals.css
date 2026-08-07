@@ -27,11 +27,27 @@
 /* ─── Scroll ──────────────────────────────────────────────────────────────── */
 /* NOTE: scroll-behavior:smooth removed — Lenis handles smooth scroll.
    Having both causes double-smoothing and makes scroll feel sluggish.       */
+/* nav = 5rem mobile / 5.5rem desktop — exact match, no extra */
 html {
-  scroll-padding-top: calc(5rem + 1px);
+  scroll-padding-top: 5rem;
 }
 @media (min-width: 768px) {
-  html { scroll-padding-top: calc(5.5rem + 1px); }
+  html { scroll-padding-top: 5.5rem; }
+}
+/* Belt-and-suspenders: scroll-margin-top on every named section */
+#how-it-works,
+#tech-stack,
+#why-us,
+#services {
+  scroll-margin-top: 5rem;
+}
+@media (min-width: 768px) {
+  #how-it-works,
+  #tech-stack,
+  #why-us,
+  #services {
+    scroll-margin-top: 5.5rem;
+  }
 }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto !important; }
@@ -82,7 +98,8 @@ body {
     @apply mb-5 flex items-center gap-3 font-sans text-xs font-semibold uppercase tracking-[0.16em] text-dtl-purple;
   }
   .dtl-kicker-line {
-    @apply h-px w-6 shrink-0 rounded-full bg-gradient-to-r from-dtl-purple to-dtl-cyan;
+    @apply h-px w-6 shrink-0 rounded-full;
+    background: #7C3AED;
   }
 
   /* keep portal aliases */
@@ -350,3 +367,83 @@ body {
 .scrollbar-none::-webkit-scrollbar {
   display: none;
 }
+
+/* ─── TechStack marquee ───────────────────────────────────────────────────── */
+@keyframes dtlMarqueeLeft {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+@keyframes dtlMarqueeRight {
+  from { transform: translateX(-50%); }
+  to   { transform: translateX(0); }
+}
+
+/* ─── Services scroll-story ───────────────────────────────────────────────── */
+.services-scroll-section {
+  /* svh = small viewport height — always excludes browser chrome on mobile   */
+  height: calc(100vh * 14);        /* fallback for very old browsers          */
+  height: calc(100svh * 14);
+  background: #050714;
+}
+.services-sticky-inner {
+  height: 100vh;                   /* fallback */
+  height: 100svh;
+}
+/* Card wrapper: responsive size, never overflows viewport */
+.services-card-wrapper {
+  width: min(92vw, 920px);
+  height: clamp(440px, 76svh, 560px);
+}
+/* On very small phones (< 380px) shrink further */
+@media (max-width: 380px) {
+  .services-card-wrapper {
+    height: clamp(420px, 82svh, 480px);
+  }
+}
+/* Service card description: clamp on mobile only so CTA stays visible */
+.svc-desc {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+}
+@media (min-width: 768px) {
+  .svc-desc {
+    display: block;
+    -webkit-line-clamp: unset;
+    overflow: visible;
+  }
+}
+
+/* Card inner zones: mobile = stacked portrait, desktop = side-by-side */
+.svc-illus-zone {
+  height: 40%;          /* mobile: top 40% of card */
+}
+@media (min-width: 768px) {
+  .svc-illus-zone {
+    height: 100%;        /* desktop: full-height left panel */
+  }
+}
+.svc-text-zone {
+  top: 30%;             /* mobile: starts at 30% — extra room for all content */
+}
+@media (min-width: 768px) {
+  .svc-text-zone {
+    top: 0;              /* desktop: full-height right panel */
+  }
+}
+
+/* Arrow buttons: reveal on card-area hover (desktop only) */
+@media (min-width: 768px) {
+  .services-arrow {
+    opacity: 0;
+    transition: opacity 0.2s, background 0.2s, border-color 0.2s, color 0.2s;
+  }
+  .services-card-wrapper:hover .services-arrow {
+    opacity: 1;
+  }
+  .services-arrow:disabled {
+    opacity: 0 !important;
+  }
+}
+
